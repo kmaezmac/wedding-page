@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { postToNotion } from '../api/page';
-import Header from '../components/header'
 import Footer from '../components/footer'
 
 // カスタムテーマの作成
