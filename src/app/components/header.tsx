@@ -1,7 +1,4 @@
 import React from 'react'
-import Image from 'next/image';
-import background from './background.png'
-import Head from "next/head"
 
 const Header = () => {
   return (
