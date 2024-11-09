@@ -17,7 +17,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { postToNotion } from '../api/page';
+import { postToNotion } from '../api/api';
 import Footer from '../components/footer'
 
 // カスタムテーマの作成
