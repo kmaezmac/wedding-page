@@ -10,14 +10,14 @@ import { Button } from "@mui/material";
 import { useState} from 'react';
 
 const Main = () => {
-  const [dateText, setDateText] = useState(process.env.NEXT_PUBLIC_DATE_YEAR + "年" +  process.env.NEXT_PUBLIC_DATE_MONTH + "月" + process.env.NEXT_PUBLIC_DATE_DAY + "日"|| '');
-  const [timeCeremony, setTimeCeremonyText] = useState(process.env.NEXT_PUBLIC_CEREMONY_TIME || '');
-  const [timeReception, setTimeReceptionText] = useState(process.env.NEXT_PUBLIC_RECEPTION_TIME || '');
-  const [churchName, setchurchNameText] = useState(process.env.NEXT_PUBLIC_CHURCH_NAME || '');
-  const [churchAddress, setchurchAddressText] = useState(process.env.NEXT_PUBLIC_CHURCH_ADDRESS || '');
-  const [churchAccess, setchurchAccessText] = useState(process.env.NEXT_PUBLIC_CHURCH_ACCESS || '');
-  const [churchTel, setchurchTelText] = useState(process.env.NEXT_PUBLIC_CHURCH_TEL || '');
-  const [churchMap, setchurchMapText] = useState(process.env.NEXT_PUBLIC_CHURCH_MAP_URL || '');
+  const [dateText] = useState(process.env.NEXT_PUBLIC_DATE_YEAR + "年" +  process.env.NEXT_PUBLIC_DATE_MONTH + "月" + process.env.NEXT_PUBLIC_DATE_DAY + "日"|| '');
+  const [timeCeremony] = useState(process.env.NEXT_PUBLIC_CEREMONY_TIME || '');
+  const [timeReception] = useState(process.env.NEXT_PUBLIC_RECEPTION_TIME || '');
+  const [churchName] = useState(process.env.NEXT_PUBLIC_CHURCH_NAME || '');
+  const [churchAddress] = useState(process.env.NEXT_PUBLIC_CHURCH_ADDRESS || '');
+  const [churchAccess] = useState(process.env.NEXT_PUBLIC_CHURCH_ACCESS || '');
+  const [churchTel] = useState(process.env.NEXT_PUBLIC_CHURCH_TEL || '');
+  const [churchMap] = useState(process.env.NEXT_PUBLIC_CHURCH_MAP_URL || '');
 
   return (
     <div className="mt-16 min-h-screen pb-16"> {/* Headerとの余白とFooterのスペースを確保 */}
