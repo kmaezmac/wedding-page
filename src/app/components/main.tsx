@@ -10,10 +10,10 @@ import { Button } from "@mui/material";
 const Main = () => {
   return (
     <>
-      <div className="flex flex-col justify-center bg-white opacity-85 relative h-screen p-4 sm:p-8 md:p-16 lg:p-24 xl:p-32">
+      <div className="flex flex-col justify-center bg-white opacity-85 relative h-screen px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 max-w-4xl mx-auto">
         <section className="my-6 sm:my-12 text-center">
           <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-4 sm:mb-6">ご挨拶</h2>
-          <p className="text-base sm:text-lg leading-relaxed">
+          <p className="text-base sm:text-lg leading-relaxed break-words">
             謹啓　〇〇の候（時候の挨拶）皆様にはますますご清祥のこととお慶び申し上げます
             このたび　私たちは結婚式を挙げることになりました
             つきましては　日ごろお世話になっている皆様に お集まりいただき
@@ -22,7 +22,7 @@ const Main = () => {
             ご来臨の栄を賜りたく　謹んでご案内申し上げます
           </p>
           <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] my-6">お願い</h2>
-          <p className="text-base sm:text-lg leading-relaxed mb-4">
+          <p className="text-base sm:text-lg leading-relaxed break-words mb-4">
             まだ回答されていない方は、こちらから出席確認を行なってください。
           </p>
           <div className='flex justify-center pb-4'>
@@ -30,7 +30,7 @@ const Main = () => {
               出席確認
             </Button>
           </div>
-          <p className="text-base sm:text-lg leading-relaxed mb-4">
+          <p className="text-base sm:text-lg leading-relaxed break-words mb-4">
             まだ友達追加されていない方は、こちらから結婚式公式Lineアカウントを友達追加を行なってください。
           </p>
           <div className='flex justify-center pb-6'>
@@ -42,7 +42,7 @@ const Main = () => {
 
         <section className="my-6 sm:my-12 text-center">
           <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-4 sm:mb-6">スケジュール</h2>
-          <p className="text-base sm:text-lg leading-relaxed mb-4">
+          <p className="text-base sm:text-lg leading-relaxed mb-4 break-words">
             結婚式の日程はこちらです。
           </p>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -53,7 +53,7 @@ const Main = () => {
             </div>
           </LocalizationProvider>
           <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mt-8 mb-4 sm:mb-6">場所</h2>
-          <p className="text-base sm:text-lg leading-relaxed">
+          <p className="text-base sm:text-lg leading-relaxed break-words">
             結婚式の場所はこちらです。
           </p>
         </section>
