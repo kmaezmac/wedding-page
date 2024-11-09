@@ -1,3 +1,4 @@
+// Main.js
 'use client'
 import React from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -9,8 +10,8 @@ import { Button } from "@mui/material";
 
 const Main = () => {
   return (
-    <>
-      <div className="flex flex-col justify-center bg-white opacity-85 relative h-screen px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 max-w-4xl mx-auto">
+    <div className="mt-32 min-h-screen pb-16"> {/* Headerとの余白とFooterのスペースを確保 */}
+      <div className="flex flex-col justify-center bg-white opacity-85 relative px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 max-w-4xl mx-auto">
         <section className="my-6 sm:my-12 text-center">
           <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">ご挨拶</h2>
           <p className="text-base sm:text-lg leading-relaxed break-words">
@@ -58,7 +59,7 @@ const Main = () => {
           </p>
         </section>
       </div>
-    </>
+    </div>
   )
 }
 
