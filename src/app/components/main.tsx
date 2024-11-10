@@ -37,6 +37,7 @@ const Main: React.FC = () => {
   const [emailAddress] = useState(process.env.NEXT_PUBLIC_MAIL_ADDRESS || '');
   const [groomName] = useState(process.env.NEXT_PUBLIC_GROOM_NAME || '');
   const [brideName] = useState(process.env.NEXT_PUBLIC_BRIDE_NAME || '');
+  const [churchUrl] = useState(process.env.NEXT_PUBLIC_CHURCH_URL || '');
 
   return (
     <>
@@ -77,7 +78,7 @@ const Main: React.FC = () => {
           <Button
             variant="contained"
             href="/invitation"
-            sx={{ backgroundColor: '#f5b2b2', color: '#fff', ':hover': { backgroundColor: '#e08a8a' } }}
+            sx={{ backgroundColor: '#f5b2b2', color: '#fff' }}
           >
             出席確認
           </Button>
@@ -90,7 +91,7 @@ const Main: React.FC = () => {
             <Button
               variant="contained"
               href={process.env.NEXT_PUBLIC_LINE_URL}
-              sx={{ backgroundColor: '#06C755', color: '#fff', ':hover': { backgroundColor: '#e08a8a' } }}>
+              sx={{ backgroundColor: '#06C755', color: '#fff'}}>
               Line公式アカウントを友達追加
             </Button>
           </section>
@@ -115,6 +116,12 @@ const Main: React.FC = () => {
           icon={<MapPin className="h-10 w-10 text-rose-400" />}
           content={`会場: ${churchName}\n所在地: ${churchAddress}\nアクセス: ${churchAccess}\n電話番号: ${churchTel}`}
         >
+            <Button
+              variant="contained"
+              href={process.env.NEXT_PUBLIC_CHURCH_URL}
+              sx={{ backgroundColor: '#f5b2b2', color: '#fff' }}>
+              式場公式サイトへ移動
+            </Button>
           <iframe
             src={churchMap}
             width="100%"
