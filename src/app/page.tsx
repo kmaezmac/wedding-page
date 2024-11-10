@@ -1,7 +1,7 @@
 import React from 'react'
-import Header from './components/header'
+// import Header from './components/header'
 import Main from './components/main'
-import Footer from './components/footer'
+// import Footer from './components/footer'
 
 
 const page = () => {
@@ -12,9 +12,9 @@ const page = () => {
         <head>
         <meta name="robots" content="noindex" />
       </head>
-        <Header/>
+        {/* <Header/> */}
         <Main/>
-        <Footer/>
+        {/* <Footer/> */}
         </div>
         </div>
     </>

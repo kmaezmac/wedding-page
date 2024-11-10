@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { postToNotion } from '../api/api';
-import Footer from '../components/footer'
+// import Footer from '../components/footer'
 
 // カスタムテーマの作成
 const theme = createTheme({
@@ -153,7 +153,7 @@ export default function RSVPPage() {
         onClose={() => setOpenSnackbar(false)}
         message="ご回答いただきありがとうございます。回答が正常に送信されました。"
       />
-      <Footer/>
+      {/* <Footer/> */}
     </ThemeProvider>
   );
 }

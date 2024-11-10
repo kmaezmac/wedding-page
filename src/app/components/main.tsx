@@ -1,17 +1,32 @@
-// Main.js
 'use client'
-import React from 'react'
+import React, { useState, ReactNode } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Button } from "@mui/material";
-import { useState } from 'react';
-import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react"
+import { Button, Card, CardContent, Typography, Box } from "@mui/material";
+import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
+import dayjs from 'dayjs';
 
-const Main = () => {
-  const [dateText] = useState(process.env.NEXT_PUBLIC_DATE_YEAR + "年" + process.env.NEXT_PUBLIC_DATE_MONTH + "月" + process.env.NEXT_PUBLIC_DATE_DAY + "日" || '');
+interface SectionProps {
+  title: string;
+  icon: ReactNode;
+  content: string;
+  children?: ReactNode;
+}
+
+const Section: React.FC<SectionProps> = ({ title, icon, content, children }) => (
+  <section className="text-center space-y-4">
+    <div className="flex justify-center mb-4">{icon}</div>
+    <h2 className="text-3xl font-serif text-[#7d5a50]">{title}</h2>
+    <p className="text-lg text-gray-700 whitespace-pre-line">{content}</p>
+    {children}
+  </section>
+);
+
+const Main: React.FC = () => {
+  const [dateText] = useState(
+    `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
+  );
   const [timeCeremony] = useState(process.env.NEXT_PUBLIC_CEREMONY_TIME || '');
   const [timeReception] = useState(process.env.NEXT_PUBLIC_RECEPTION_TIME || '');
   const [churchName] = useState(process.env.NEXT_PUBLIC_CHURCH_NAME || '');
@@ -20,91 +35,121 @@ const Main = () => {
   const [churchTel] = useState(process.env.NEXT_PUBLIC_CHURCH_TEL || '');
   const [churchMap] = useState(process.env.NEXT_PUBLIC_CHURCH_MAP_URL || '');
   const [emailAddress] = useState(process.env.NEXT_PUBLIC_MAIL_ADDRESS || '');
-  
+  const [groomName] = useState(process.env.NEXT_PUBLIC_GROOM_NAME || '');
+  const [brideName] = useState(process.env.NEXT_PUBLIC_BRIDE_NAME || '');
 
   return (
-    <div className="mt-16 min-h-screen pb-16"> {/* Headerとの余白とFooterのスペースを確保 */}
-      <div className="flex flex-col justify-center bg-white opacity-85 relative px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 max-w-4xl mx-auto">
-        <section className="my-6 text-center">
-        <Gem className="mx-auto mb-4 h-8 w-8 text-rose-400" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">ご挨拶</h2>
-          <p className="text-base sm:text-lg leading-relaxed break-words">
-            拝啓<br />
-            晩秋の候、皆様にはますますご健勝のこととお慶び申し上げます<br />
-            このたび、私たちは{dateText}に結婚式を挙げる運びとなりました<br />
-            これまで私たちを支えていただきました皆様へ、日頃の感謝の気持ちをお伝えし、心に残るひとときを共に過ごしたく存じます<br />
-            つきましては、誠に勝手ながら下記により挙式および披露宴を執り行いますので、ご多用中とは存じますが、ぜひご出席賜りますようお願い申し上げます<br />
-            敬具
-          </p>
-        </section>
-        <section className="my-6  text-center">
-        <CircleAlert className="mx-auto mb-4 h-8 w-8 text-rose-400 mt-12" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">お願い</h2>
-          <p className="text-base sm:text-lg leading-relaxed break-words mb-4">
-            まだ回答されていない方は、こちらから出席確認を行なってください
-          </p>
-          <div className='flex justify-center pb-4'>
-            <Button sx={{ backgroundColor: '#f5b2b2', color: '#FFFFFF' }} variant="contained" href="/invitation">
-              出席確認
-            </Button>
-          </div>
-          <p className="text-base sm:text-lg leading-relaxed break-words mb-4">
-            まだ友達追加されていない方は、こちらから結婚式公式Lineアカウントの友達追加を行なってください
-          </p>
-          <div className='flex justify-center pb-6'>
-            <Button sx={{ backgroundColor: '#06C755', color: '#FFFFFF' }} variant="contained" href={process.env.NEXT_PUBLIC_LINE_URL}>
+    <>
+      <header className="w-full text-center bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
+        <h1 className="text-5xl font-serif text-[#b56576]">Wedding Website</h1>
+        <p className="text-2xl text-[#7d5a50] mt-4">{groomName} & {brideName}</p>
+      </header>
+
+      <main className="bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
+        {/* ご挨拶セクションをCardに変更 */}
+        <Card sx={{ maxWidth: 600, mx: 'auto', mb: 6, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff7f5' }}>
+          <CardContent>
+            <Box className="flex justify-center mb-4">
+              <Gem className="h-10 w-10 text-rose-400" />
+            </Box>
+            <Typography variant="h5" component="div" className="font-serif text-[#7d5a50] text-center">
+              ご挨拶
+            </Typography>
+            <Typography variant="body1" color="text.secondary" className="text-gray-700 text-center whitespace-pre-line mt-4">
+              {`拝啓
+晩秋の候、皆様にはますますご健勝のこととお慶び申し上げます
+
+このたび、私たちは`}{dateText}{`に結婚式を挙げる運びとなりました
+
+これまで私たちを支えていただきました皆様へ、日頃の感謝の気持ちをお伝えし、心に残るひとときを共に過ごしたく存じます
+
+つきましては、誠に勝手ながら下記により挙式および披露宴を執り行いますので、ご多用中とは存じますが、ぜひご出席賜りますようお願い申し上げます
+敬具`}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Section
+          title="お願い"
+          icon={<CircleAlert className="h-10 w-10 text-rose-400" />}
+          content="まだ回答されていない方は、こちらから出席確認を行なってください"
+        >
+          <Button
+            variant="contained"
+            href="/invitation"
+            sx={{ backgroundColor: '#f5b2b2', color: '#fff', ':hover': { backgroundColor: '#e08a8a' } }}
+          >
+            出席確認
+          </Button>
+
+          <section className="text-center space-y-4">
+            <h2 className="text-3xl font-serif text-[#7d5a50]"></h2>
+            <p className="text-lg text-gray-700 whitespace-pre-line">
+              まだ友達追加されていない方は、こちらから結婚式公式Lineアカウントの友達追加を行なってください
+            </p>
+            <Button
+              variant="contained"
+              href={process.env.NEXT_PUBLIC_LINE_URL}
+              sx={{ backgroundColor: '#06C755', color: '#fff', ':hover': { backgroundColor: '#e08a8a' } }}>
               Line公式アカウントを友達追加
             </Button>
-          </div>
-        </section>
+          </section>
+        </Section>
 
-        <section className="my-1 text-center mt-12">
-        <Calendar className="mx-auto mb-4 h-8 w-8 text-rose-400" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] ">日時</h2>
+        <Section
+          title="日時"
+          icon={<Calendar className="h-10 w-10 text-rose-400" />}
+          content=""
+        >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className='flex justify-center pt-4 sm:pt-6'>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker label="挙式日" defaultValue={dayjs(process.env.NEXT_PUBLIC_DATE_YEAR + '-' + process.env.NEXT_PUBLIC_DATE_MONTH + '-' + process.env.NEXT_PUBLIC_DATE_DAY)} />
-              </DemoContainer>
-            </div>
+            <DatePicker
+              label="挙式日"
+              defaultValue={dayjs(`${process.env.NEXT_PUBLIC_DATE_YEAR}-${process.env.NEXT_PUBLIC_DATE_MONTH}-${process.env.NEXT_PUBLIC_DATE_DAY}`)}
+            />
           </LocalizationProvider>
-          挙式: {timeCeremony}<br />
-          披露宴: {timeReception}
-        </section>
-        <section className="my-1 text-center mt-12">
-        <MapPin className="mx-auto mb-4 h-8 w-8 text-rose-400" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">場所</h2>
-          <p className="text-base sm:text-lg leading-relaxed break-words">
-            会場: {churchName}<br />
-            所在地: {churchAddress}<br />
-            アクセス: {churchAccess}<br />
-            電話番号: {churchTel}
-          </p>
-          <div className='flex justify-center pb-6'>
-            <iframe src={churchMap} width="600" height="450" loading="lazy" ></iframe>
-          </div>
-        </section>
-        <section className="my-1 text-center mt-12">
-        <Camera className="mx-auto mb-4 h-8 w-8 text-rose-400" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">写真</h2>
-          <p className="text-base sm:text-lg leading-relaxed mb-4 break-words">
-            撮影した写真・動画をこちらにアップロードしてください
-          </p>
-          <Button sx={{ backgroundColor: '#4285F4', color: '#FFFFFF' }} variant="contained" href={process.env.NEXT_PUBLIC_GOOGLE_DRIVE_URL}>
-              写真をアップロード
-            </Button>
-        </section>
-        <section className="my-1 text-center mt-12">
-        <MessageCircle className="mx-auto mb-4 h-8 w-8 text-rose-400" />
-          <h2 className="text-3xl sm:text-4xl font-serif text-[#7d5a50] mb-6">お問い合わせ</h2>
-          <p className="text-base sm:text-lg leading-relaxed mb-4 break-words">
-            何かご不明な点や困りごとがございましたら こちらにメールしてください<br/>
-            {emailAddress}
-          </p>
-        </section>
-      </div>
-    </div>
+          <p>挙式: {timeCeremony}<br />披露宴: {timeReception}</p>
+        </Section>
+
+        <Section
+          title="場所"
+          icon={<MapPin className="h-10 w-10 text-rose-400" />}
+          content={`会場: ${churchName}\n所在地: ${churchAddress}\nアクセス: ${churchAccess}\n電話番号: ${churchTel}`}
+        >
+          <iframe
+            src={churchMap}
+            width="100%"
+            height="300"
+            loading="lazy"
+            className="rounded-md shadow-md"
+          ></iframe>
+        </Section>
+
+        <Section
+          title="写真"
+          icon={<Camera className="h-10 w-10 text-rose-400" />}
+          content="撮影した写真・動画をこちらにアップロードしてください"
+        >
+          <Button
+            variant="contained"
+            href={process.env.NEXT_PUBLIC_GOOGLE_DRIVE_URL}
+            sx={{ backgroundColor: '#4285F4', color: '#fff' }}
+          >
+            写真をアップロード
+          </Button>
+        </Section>
+
+        <Section
+          title="お問い合わせ"
+          icon={<MessageCircle className="h-10 w-10 text-rose-400" />}
+          content={`何かご不明な点や困りごとがございましたら こちらにメールしてください\n${emailAddress}`}
+        />
+      </main>
+
+      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
+        © 2025 All rights reserved.
+      </footer>
+    </>
   )
 }
 
-export default Main
+export default Main;
