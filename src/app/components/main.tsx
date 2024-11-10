@@ -37,7 +37,6 @@ const Main: React.FC = () => {
   const [emailAddress] = useState(process.env.NEXT_PUBLIC_MAIL_ADDRESS || '');
   const [groomName] = useState(process.env.NEXT_PUBLIC_GROOM_NAME || '');
   const [brideName] = useState(process.env.NEXT_PUBLIC_BRIDE_NAME || '');
-  const [churchUrl] = useState(process.env.NEXT_PUBLIC_CHURCH_URL || '');
 
   return (
     <>
