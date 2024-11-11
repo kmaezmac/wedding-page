@@ -7,6 +7,9 @@ import { Button, Card, CardContent, Typography, Box } from "@mui/material";
 import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
 import dayjs from 'dayjs';
 import headerImage from './header.png';
+import 'dayjs/locale/ja';
+
+dayjs.locale('ja');
 
 interface SectionProps {
   title: string;
@@ -41,11 +44,11 @@ const Main: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-5xl  mx-auto md:p-12 space-y-16  opacity-95">
+      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-xl  mx-auto md:p-12 space-y-16  opacity-95">
         <img src={headerImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
       </div>
 
-      <main className="bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
+      <main className="bg-white max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95 ">
         {/* ご挨拶セクションをCardに変更 */}
         <Card sx={{ maxWidth: 600, mx: 'auto', mb: 6, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff7f5' }}>
           <CardContent>
@@ -101,9 +104,11 @@ const Main: React.FC = () => {
           icon={<Calendar className="h-10 w-10 text-rose-400" />}
           content=""
         >
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ year: 'YYYY年' }}>
             <DatePicker
               label="挙式日"
+              format="YYYY/MM/DD"
+              slotProps={{ calendarHeader: { format: 'YYYY年MM月' } }}
               defaultValue={dayjs(`${process.env.NEXT_PUBLIC_DATE_YEAR}-${process.env.NEXT_PUBLIC_DATE_MONTH}-${process.env.NEXT_PUBLIC_DATE_DAY}`)}
             />
           </LocalizationProvider>
@@ -151,7 +156,7 @@ const Main: React.FC = () => {
         />
       </main>
 
-      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
+      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
         <p>© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.</p>
       </footer>
     </>
