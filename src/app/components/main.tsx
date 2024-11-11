@@ -41,11 +41,11 @@ const Main: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-5xl  mx-auto md:p-12 space-y-16  opacity-95">
+      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-xl  mx-auto md:p-12 space-y-16  opacity-95">
         <img src={headerImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
       </div>
 
-      <main className="bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
+      <main className="bg-white max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95 ">
         {/* ご挨拶セクションをCardに変更 */}
         <Card sx={{ maxWidth: 600, mx: 'auto', mb: 6, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff7f5' }}>
           <CardContent>
@@ -151,7 +151,7 @@ const Main: React.FC = () => {
         />
       </main>
 
-      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
+      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
         <p>© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.</p>
       </footer>
     </>
