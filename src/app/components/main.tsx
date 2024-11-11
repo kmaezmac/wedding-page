@@ -6,6 +6,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button, Card, CardContent, Typography, Box } from "@mui/material";
 import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
 import dayjs from 'dayjs';
+import headerImage from './header.png';
+import ChurchIcon from '@mui/icons-material/Church';
 
 interface SectionProps {
   title: string;
@@ -40,12 +42,11 @@ const Main: React.FC = () => {
 
   return (
     <>
-      <header className="w-full text-center bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
-        <h1 className="text-5xl font-serif text-[#b56576]">Wedding Website</h1>
-        <p className="text-2xl text-[#7d5a50] mt-4">{groomName} & {brideName}</p>
-      </header>
+      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-5xl  mx-auto md:p-12 space-y-16  opacity-95">
+        <img src={headerImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
+      </div>
 
-      <main className="bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
+      <main className="bg-white max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
         {/* ご挨拶セクションをCardに変更 */}
         <Card sx={{ maxWidth: 600, mx: 'auto', mb: 6, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff7f5' }}>
           <CardContent>
@@ -90,7 +91,7 @@ const Main: React.FC = () => {
             <Button
               variant="contained"
               href={process.env.NEXT_PUBLIC_LINE_URL}
-              sx={{ backgroundColor: '#06C755', color: '#fff'}}>
+              sx={{ backgroundColor: '#06C755', color: '#fff' }}>
               Line公式アカウントを友達追加
             </Button>
           </section>
@@ -115,12 +116,12 @@ const Main: React.FC = () => {
           icon={<MapPin className="h-10 w-10 text-rose-400" />}
           content={`会場: ${churchName}\n所在地: ${churchAddress}\nアクセス: ${churchAccess}\n電話番号: ${churchTel}`}
         >
-            <Button
-              variant="contained"
-              href={process.env.NEXT_PUBLIC_CHURCH_URL}
-              sx={{ backgroundColor: '#f5b2b2', color: '#fff' }}>
-              式場公式サイトへ移動
-            </Button>
+          <Button
+            variant="contained"
+            href={process.env.NEXT_PUBLIC_CHURCH_URL}
+            sx={{ backgroundColor: '#f5b2b2', color: '#fff' }}>
+            式場公式サイトへ移動
+          </Button>
           <iframe
             src={churchMap}
             width="100%"
@@ -151,8 +152,8 @@ const Main: React.FC = () => {
         />
       </main>
 
-      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-85">
-        © 2025 All rights reserved.
+      <footer className="w-full text-center bg-white py-6 text-[#7d5a50] border-t max-w-5xl mx-auto p-6 md:p-12 space-y-16 opacity-95">
+        <p>© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.</p>
       </footer>
     </>
   )

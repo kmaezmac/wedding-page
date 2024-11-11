@@ -52,7 +52,10 @@ export default function RSVPPage() {
     // Redirect to thank you page or home page after a short delay
     setTimeout(() => router.push('/'), 2000);
   };
-
+  const [dateText] = useState(
+    `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
+  );
+  
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="sm">
@@ -62,7 +65,7 @@ export default function RSVPPage() {
               出席確認
             </Typography>
             <Typography variant="subtitle1" gutterBottom align="center">
-              2025年8月31日 の結婚式
+            {dateText}の結婚式
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
               <TextField
