@@ -7,7 +7,6 @@ import { Button, Card, CardContent, Typography, Box } from "@mui/material";
 import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
 import dayjs from 'dayjs';
 import headerImage from './header.png';
-import ChurchIcon from '@mui/icons-material/Church';
 
 interface SectionProps {
   title: string;
