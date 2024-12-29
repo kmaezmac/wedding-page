@@ -86,11 +86,12 @@ const credentials = {
 
 export async function uploadFileToDrive(file: File) {
     const drive = google.drive({ version: 'v3', auth });
-  
+    const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
     const response = await drive.files.create({
       requestBody: {
         name: file.name,
         mimeType: file.type,
+        parents: [directoryId],
       },
       media: {
         mimeType: file.type,
