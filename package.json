@@ -15,8 +15,12 @@
     "@mui/material": "^6.1.6",
     "@mui/x-date-pickers": "^7.19.0",
     "@notionhq/client": "^2.2.15",
+    "axios": "^1.7.9",
     "dayjs": "^1.11.13",
+    "formidable": "^3.5.2",
     "framer-motion": "^11.11.11",
+    "google-auth-library": "^9.15.0",
+    "googleapis": "^144.0.0",
     "http-proxy-middleware": "^3.0.2",
     "lucide-react": "^0.447.0",
     "next": "14.2.14",
@@ -27,6 +31,7 @@
     "shadcn-ui": "^0.9.2"
   },
   "devDependencies": {
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -3,11 +3,14 @@ import React, { useState, ReactNode } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Button, Card, CardContent, Typography, Box } from "@mui/material";
+import { Button, Card, CardContent, Typography, Box, CircularProgress } from "@mui/material";
 import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
 import dayjs from 'dayjs';
 import headerImage from './header.png';
 import 'dayjs/locale/ja';
+import { uploadFileToDrive } from '../api/api';
+
+
 
 dayjs.locale('ja');
 
@@ -28,6 +31,7 @@ const Section: React.FC<SectionProps> = ({ title, icon, content, children }) => 
 );
 
 const Main: React.FC = () => {
+
   const [dateText] = useState(
     `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
   );
@@ -41,6 +45,37 @@ const Main: React.FC = () => {
   const [emailAddress] = useState(process.env.NEXT_PUBLIC_MAIL_ADDRESS || '');
   const [groomName] = useState(process.env.NEXT_PUBLIC_GROOM_NAME || '');
   const [brideName] = useState(process.env.NEXT_PUBLIC_BRIDE_NAME || '');
+
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setUploadStatus('ファイルを選択してください。');
+      return;
+    }
+
+    setLoading(true);
+    setUploadStatus('アップロード中...');
+
+    try {
+      const response = await uploadFileToDrive(file);
+      const data = await response.json();
+      setUploadStatus(`アップロード成功！ URL: ${data.url}`);
+    } catch (error) {
+      console.error('アップロードエラー:', error);
+      setUploadStatus('アップロードに失敗しました。');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -134,6 +169,25 @@ const Main: React.FC = () => {
             className="rounded-md shadow-md"
           ></iframe>
         </Section>
+
+        <div className="text-center space-y-4">
+      <Typography variant="h6" component="div">
+        写真・動画アップロード
+      </Typography>
+      <input type="file" onChange={handleFileChange} />
+      <Button
+        variant="contained"
+        onClick={handleUpload}
+        sx={{ backgroundColor: '#4285F4', color: '#fff' }}
+        disabled={loading}
+      >
+        アップロード
+      </Button>
+      {loading && <CircularProgress />}
+      <Typography variant="body2" color="text.secondary">
+        {uploadStatus}
+      </Typography>
+    </div>
 
         <Section
           title="写真"
