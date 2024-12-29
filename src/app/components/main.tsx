@@ -66,16 +66,21 @@ const Main: React.FC = () => {
     setUploadStatus('アップロード中...');
 
     try {
-      const response = await uploadFileToDrive(file);
-      const data = await response.json();
-      setUploadStatus(`アップロード成功！ URL: ${data.url}`);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64File = reader.result as string;
+        const response = await uploadFileToDrive(base64File, file.name, file.type);
+        const data = await response.json();
+        setUploadStatus(`アップロード成功！ URL: ${data.url}`);
+      };
     } catch (error) {
       console.error('アップロードエラー:', error);
       setUploadStatus('アップロードに失敗しました。');
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <>

@@ -84,18 +84,20 @@ const credentials = {
     scopes: ['https://www.googleapis.com/auth/drive.file'],
   });
 
-export async function uploadFileToDrive(file: File) {
+  export async function uploadFileToDrive(base64File: string, fileName: string, mimeType: string) {
     const drive = google.drive({ version: 'v3', auth });
     const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
+    const buffer = Buffer.from(base64File.split(',')[1], 'base64');
+
     const response = await drive.files.create({
       requestBody: {
-        name: file.name,
-        mimeType: file.type,
+        name: fileName,
+        mimeType: mimeType,
         parents: [directoryId],
       },
       media: {
-        mimeType: file.type,
-        body: file,
+        mimeType: mimeType,
+        body: buffer,
       },
     });
   
