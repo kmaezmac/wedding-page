@@ -1,7 +1,6 @@
 'use server'
 import { Client } from "@notionhq/client";
 import { google } from 'googleapis';
-import { NextResponse } from 'next/server';
 import { Stream } from 'stream';
 
 const notion = new Client({
