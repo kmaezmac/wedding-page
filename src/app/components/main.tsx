@@ -70,7 +70,7 @@ const Main: React.FC = () => {
       reader.readAsDataURL(file);
       reader.onloadend = async () => {
         const base64File = reader.result as string;
-        const response = await uploadFileToDrive(base64File, file.name, file.type);
+        await uploadFileToDrive(base64File, file.name, file.type);
         setUploadStatus(`アップロードに成功しました`);
       };
     } catch (error) {
