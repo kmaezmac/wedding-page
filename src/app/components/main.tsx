@@ -71,8 +71,7 @@ const Main: React.FC = () => {
       reader.onloadend = async () => {
         const base64File = reader.result as string;
         const response = await uploadFileToDrive(base64File, file.name, file.type);
-        // const data = await response.json();
-        setUploadStatus(`アップロード成功！ URL: ${response.url}`);
+        setUploadStatus(`アップロードに成功しました`);
       };
     } catch (error) {
       console.error('アップロードエラー:', error);
@@ -175,11 +174,12 @@ const Main: React.FC = () => {
           ></iframe>
         </Section>
 
-        <div className="text-center space-y-4">
-      <Typography variant="h6" component="div">
-        写真・動画アップロード
-      </Typography>
-      <input type="file" onChange={handleFileChange} />
+        <Section
+          title="写真"
+          icon={<Camera className="h-10 w-10 text-rose-400" />}
+          content="撮影した写真・動画をこちらにアップロードしてください"
+        >
+          <input type="file" onChange={handleFileChange} />
       <Button
         variant="contained"
         onClick={handleUpload}
@@ -192,20 +192,14 @@ const Main: React.FC = () => {
       <Typography variant="body2" color="text.secondary">
         {uploadStatus}
       </Typography>
-    </div>
-
-        <Section
-          title="写真"
-          icon={<Camera className="h-10 w-10 text-rose-400" />}
-          content="撮影した写真・動画をこちらにアップロードしてください"
-        >
-          <Button
+      <Button
             variant="contained"
             href={process.env.NEXT_PUBLIC_GOOGLE_DRIVE_URL}
             sx={{ backgroundColor: '#4285F4', color: '#fff' }}
           >
-            写真をアップロード
+            アップロードした写真・動画はこちらで確認
           </Button>
+
         </Section>
 
         <Section
