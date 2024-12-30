@@ -2,6 +2,7 @@
 import { Client } from "@notionhq/client";
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { Stream } from 'stream';
 
 const notion = new Client({
     auth: process.env.NEXT_PUBLIC_NOTION_ACCESS_TOKEN
@@ -101,7 +102,7 @@ const credentials = {
       },
       media: {
         mimeType: mimeType,
-        body: buffer,
+        body: new Stream.PassThrough().end(buffer),
       },
     });
     console.log("ダンダダン")
