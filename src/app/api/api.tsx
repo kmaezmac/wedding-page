@@ -90,6 +90,8 @@ const credentials = {
     const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
     console.log(directoryId)
     const buffer = Buffer.from(base64File.split(',')[1], 'base64');
+    console.log("fileName " + fileName)
+    console.log("mimeType " + mimeType)
 
     const response = await drive.files.create({
       requestBody: {
