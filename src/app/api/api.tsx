@@ -85,8 +85,10 @@ const credentials = {
   });
 
   export async function uploadFileToDrive(base64File: string, fileName: string, mimeType: string) {
+    console.log(base64File)
     const drive = google.drive({ version: 'v3', auth });
     const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
+    console.log(directoryId)
     const buffer = Buffer.from(base64File.split(',')[1], 'base64');
 
     const response = await drive.files.create({
@@ -100,6 +102,7 @@ const credentials = {
         body: buffer,
       },
     });
+    console.log("ダンダダン")
   
     return NextResponse.json({
       message: 'アップロード成功！',
