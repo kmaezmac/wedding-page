@@ -107,8 +107,8 @@ const credentials = {
     });
     console.log("ダンダダン")
   
-    return NextResponse.json({
-      message: 'アップロード成功！',
-      url: `https://drive.google.com/file/d/${response.data.id}`,
-    });
+    return {
+        message: 'アップロード成功！',
+        url: `https://drive.google.com/file/d/${response.data.id}`,
+      };
   }

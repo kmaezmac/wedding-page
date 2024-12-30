@@ -71,8 +71,8 @@ const Main: React.FC = () => {
       reader.onloadend = async () => {
         const base64File = reader.result as string;
         const response = await uploadFileToDrive(base64File, file.name, file.type);
-        const data = await response.json();
-        setUploadStatus(`アップロード成功！ URL: ${data.url}`);
+        // const data = await response.json();
+        setUploadStatus(`アップロード成功！ URL: ${response.url}`);
       };
     } catch (error) {
       console.error('アップロードエラー:', error);
