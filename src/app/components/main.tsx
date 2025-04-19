@@ -10,8 +10,6 @@ import headerImage from './header.png';
 import 'dayjs/locale/ja';
 import { uploadFileToDrive } from '../api/api';
 
-
-
 dayjs.locale('ja');
 
 interface SectionProps {
@@ -31,7 +29,6 @@ const Section: React.FC<SectionProps> = ({ title, icon, content, children }) => 
 );
 
 const Main: React.FC = () => {
-
   const [dateText] = useState(
     `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
   );
@@ -46,18 +43,18 @@ const Main: React.FC = () => {
   const [groomName] = useState(process.env.NEXT_PUBLIC_GROOM_NAME || '');
   const [brideName] = useState(process.env.NEXT_PUBLIC_BRIDE_NAME || '');
 
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]); // 複数ファイルを管理
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFile(event.target.files[0]);
+    if (event.target.files) {
+      setFiles(Array.from(event.target.files)); // 選択されたファイルを配列に変換して保存
     }
   };
 
   const handleUpload = async () => {
-    if (!file) {
+    if (files.length === 0) {
       setUploadStatus('ファイルを選択してください。');
       return;
     }
@@ -66,20 +63,31 @@ const Main: React.FC = () => {
     setUploadStatus('アップロード中...');
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64File = reader.result as string;
-        await uploadFileToDrive(base64File, file.name, file.type);
-        setUploadStatus(`アップロードに成功しました`);
-      };
+      const uploadPromises = files.map((file) => {
+        return new Promise<void>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = async () => {
+            try {
+              const base64File = reader.result as string;
+              await uploadFileToDrive(base64File, file.name, file.type); // 各ファイルをアップロード
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          };
+        });
+      });
+
+      await Promise.all(uploadPromises); // 全てのアップロードが完了するまで待機
+      setUploadStatus('全てのファイルがアップロードされました。');
     } catch (error) {
       console.error('アップロードエラー:', error);
-      setUploadStatus('アップロードに失敗しました。');
+      setUploadStatus('一部または全てのファイルのアップロードに失敗しました。');
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -179,27 +187,26 @@ const Main: React.FC = () => {
           icon={<Camera className="h-10 w-10 text-rose-400" />}
           content="撮影した写真・動画をこちらにアップロードしてください"
         >
-          <input type="file" onChange={handleFileChange} />
-      <Button
-        variant="contained"
-        onClick={handleUpload}
-        sx={{ backgroundColor: '#4285F4', color: '#fff' }}
-        disabled={loading}
-      >
-        アップロード
-      </Button>
-      {loading && <CircularProgress />}
-      <Typography variant="body2" color="text.secondary">
-        {uploadStatus}
-      </Typography>
-      <Button
+          <input type="file" multiple onChange={handleFileChange} /> {/* multiple属性を追加 */}
+          <Button
+            variant="contained"
+            onClick={handleUpload}
+            sx={{ backgroundColor: '#4285F4', color: '#fff' }}
+            disabled={loading}
+          >
+            アップロード
+          </Button>
+          {loading && <CircularProgress />}
+          <Typography variant="body2" color="text.secondary">
+            {uploadStatus}
+          </Typography>
+          <Button
             variant="contained"
             href={process.env.NEXT_PUBLIC_GOOGLE_DRIVE_URL}
             sx={{ backgroundColor: '#4285F4', color: '#fff' }}
           >
             アップロードした写真・動画はこちらで確認
           </Button>
-
         </Section>
 
         <Section
