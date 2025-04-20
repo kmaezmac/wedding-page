@@ -92,9 +92,9 @@ const Main: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-xl  mx-auto md:p-12 space-y-16  opacity-95">
-        <img src={headerImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
-        <img src={middleImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
+      <div className="w-full h-screen bg-white relative flex flex-col items-center justify-center max-w-xl mx-auto md:p-12 space-y-16 opacity-95">
+        <img src={headerImage.src} alt="Header Image" className="w-full h-full object-contain aspect-auto" />
+        <img src={middleImage.src} alt="Middle Image" className="w-full h-full object-contain aspect-auto" />
       </div>
 
       <main className="bg-white max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95 ">
