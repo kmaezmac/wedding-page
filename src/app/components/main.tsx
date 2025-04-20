@@ -7,6 +7,7 @@ import { Button, Card, CardContent, Typography, Box, CircularProgress } from "@m
 import { Calendar, Camera, MapPin, MessageCircle, Gem, CircleAlert } from "lucide-react";
 import dayjs from 'dayjs';
 import headerImage from './header.png';
+import middleImage from './middle.png';
 import 'dayjs/locale/ja';
 import { uploadFileToDrive } from '../api/api';
 
@@ -93,6 +94,7 @@ const Main: React.FC = () => {
     <>
       <div className="w-full h-screen bg-white relative flex items-center justify-center max-w-xl  mx-auto md:p-12 space-y-16  opacity-95">
         <img src={headerImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
+        <img src={middleImage.src} alt="Full Image" className="w-full h-full object-contain aspect-auto" />
       </div>
 
       <main className="bg-white max-w-xl mx-auto p-6 md:p-12 space-y-16 opacity-95 ">
