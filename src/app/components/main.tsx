@@ -105,7 +105,7 @@ const Main: React.FC = () => {
               ご挨拶
             </button>
             <button onClick={() => scrollToSection('attendance')} className="w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-rose-50 rounded-lg transition-colors">
-              出席確認
+              お願い
             </button>
             <button onClick={() => scrollToSection('datetime')} className="w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-rose-50 rounded-lg transition-colors">
               日時
