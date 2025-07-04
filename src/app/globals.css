@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    @apply bg-gradient-to-br from-rose-100 via-pink-50 to-orange-50;
+  }
+  
+  .card-shadow {
+    @apply shadow-xl shadow-rose-100/50 hover:shadow-2xl hover:shadow-rose-200/50 transition-shadow duration-300;
+  }
+  
+  .section-spacing {
+    @apply py-6 md:py-8;
+  }
+  
+  .section-container {
+    @apply bg-white/95 backdrop-blur-sm rounded-3xl card-shadow p-6 md:p-8 mb-8 mx-auto max-w-lg;
+  }
+  
+  .header-section {
+    @apply bg-white/95 backdrop-blur-sm rounded-3xl card-shadow p-4 md:p-6 mb-6 mx-auto max-w-lg;
+  }
+  
+  .menu-button {
+    @apply fixed top-4 right-4 z-50 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105;
+  }
+  
+  .modern-button {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-full transition-all duration-200 transform hover:scale-105 active:scale-95;
+  }
+  
+  .icon-bounce {
+    @apply animate-pulse;
+  }
+}
