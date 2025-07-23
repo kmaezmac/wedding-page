@@ -21,6 +21,7 @@ const Main: React.FC = () => {
   );
   const [timeCeremony] = useState(process.env.NEXT_PUBLIC_CEREMONY_TIME || '');
   const [timeReception] = useState(process.env.NEXT_PUBLIC_RECEPTION_TIME || '');
+  const [timeAcceptance] = useState(process.env.NEXT_PUBLIC_ACCEPTANCE_TIME || '');
   const [churchName] = useState(process.env.NEXT_PUBLIC_CHURCH_NAME || '');
   const [churchPostalCode] = useState(process.env.NEXT_PUBLIC_CHURCH_POSTALCODE || '');
   const [churchAddress] = useState(process.env.NEXT_PUBLIC_CHURCH_ADDRESS || '');
@@ -125,8 +126,8 @@ const Main: React.FC = () => {
         </div>
       )}
 
-      <div className="header-section flex flex-col items-center justify-center space-y-4">
-        <img src={headerImage.src} alt="Header Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl" />
+      <div className="section-container text-center space-y-4">
+        <img src={headerImage.src} alt="Header Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
       </div>
 
       <main className="px-4 md:px-6 space-y-6">
@@ -235,7 +236,7 @@ const Main: React.FC = () => {
               defaultValue={dayjs(`${process.env.NEXT_PUBLIC_DATE_YEAR}-${process.env.NEXT_PUBLIC_DATE_MONTH}-${process.env.NEXT_PUBLIC_DATE_DAY}`)}
             />
           </LocalizationProvider>
-            <p className="text-base md:text-lg text-gray-600">挙式: {timeCeremony}<br />披露宴: {timeReception}</p>
+            <p className="text-base md:text-lg text-gray-600">受付: {timeAcceptance}<br />挙式: {timeCeremony}<br />披露宴: {timeReception}</p>
           </div>
         </section>
 
@@ -286,7 +287,7 @@ const Main: React.FC = () => {
             </div>
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">写真</h2>
-          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">撮影された写真・動画はこちらにアップロードをお願いします</p>
+          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">撮影された写真・動画は{'\n'}こちらにアップロードをお願いします</p>
           <div className="space-y-3 pt-2">
           <input 
             type="file" 
@@ -376,7 +377,7 @@ const Main: React.FC = () => {
 
       <div className="mt-6">
         <footer className="section-container text-center">
-        <p className="text-sm text-gray-500">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved. Created by {groomName}, GitHub Copilot & Claude Code</p>
+        <p className="text-sm text-gray-500 whitespace-pre-line">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.{'\n'}Created by {groomName}, GitHub Copilot & Claude Code</p>
       </footer>
       </div>
     </>
