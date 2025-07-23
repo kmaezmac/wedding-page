@@ -140,7 +140,7 @@ const Main: React.FC = () => {
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">ご挨拶</h2>
           <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">
-            {`拝啓　晩秋の候 
+            {`拝啓
 皆様にはますますご健勝のこととお慶び申し上げます
 
 このたび 
