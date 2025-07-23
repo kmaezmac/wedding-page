@@ -19,9 +19,10 @@ const Main: React.FC = () => {
   const [dateText] = useState(
     `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
   );
+  const [timeFamilyGathering] = useState(process.env.NEXT_PUBLIC_FAMILY_GATHERING_TIME || '');
+  const [timeReceptionStart] = useState(process.env.NEXT_PUBLIC_RECEPTION_START_TIME || '');
   const [timeCeremony] = useState(process.env.NEXT_PUBLIC_CEREMONY_TIME || '');
   const [timeReception] = useState(process.env.NEXT_PUBLIC_RECEPTION_TIME || '');
-  const [timeAcceptance] = useState(process.env.NEXT_PUBLIC_ACCEPTANCE_TIME || '');
   const [churchName] = useState(process.env.NEXT_PUBLIC_CHURCH_NAME || '');
   const [churchPostalCode] = useState(process.env.NEXT_PUBLIC_CHURCH_POSTALCODE || '');
   const [churchAddress] = useState(process.env.NEXT_PUBLIC_CHURCH_ADDRESS || '');
@@ -126,11 +127,10 @@ const Main: React.FC = () => {
         </div>
       )}
 
-      <div className="section-container text-center space-y-4">
-        <img src={headerImage.src} alt="Header Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
-      </div>
-
       <main className="px-4 md:px-6 space-y-6">
+        <div className="section-container text-center space-y-4">
+          <img src={headerImage.src} alt="Header Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
+        </div>
         {/* ご挨拶セクションをCardに変更 */}
         <section id="greeting" className="section-container text-center space-y-4">
           <div className="flex justify-center mb-4">
@@ -166,7 +166,7 @@ const Main: React.FC = () => {
             </div>
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">お願い</h2>
-          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">こちらから出席確認をお願いします</p>
+          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">未回答の方は出席確認をお願いします</p>
           <div className="space-y-3 pt-2">
           <Button
             variant="contained"
@@ -193,7 +193,7 @@ const Main: React.FC = () => {
 
             <div className="pt-4 border-t border-gray-200">
               <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed  mb-3">
-                こちらから結婚式公式Lineアカウントの友達追加をお願いします
+                結婚式公式Lineアカウントの{'\n'}友達追加をお願いします
               </p>
               <Button
                 variant="contained"
@@ -236,7 +236,7 @@ const Main: React.FC = () => {
               defaultValue={dayjs(`${process.env.NEXT_PUBLIC_DATE_YEAR}-${process.env.NEXT_PUBLIC_DATE_MONTH}-${process.env.NEXT_PUBLIC_DATE_DAY}`)}
             />
           </LocalizationProvider>
-            <p className="text-base md:text-lg text-gray-600">受付: {timeAcceptance}<br />挙式: {timeCeremony}<br />披露宴: {timeReception}</p>
+            <p className="text-base md:text-lg text-gray-600">親族集合: {timeFamilyGathering}<br />受付開始: {timeReceptionStart}<br />挙式: {timeCeremony}<br />披露宴: {timeReception}</p>
           </div>
         </section>
 
@@ -373,13 +373,10 @@ const Main: React.FC = () => {
             </a>
           </p>
         </section>
+        <footer className="section-container text-center mt-6">
+          <p className="text-sm text-gray-500 whitespace-pre-line">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.{'\n'}Created by {groomName}, GitHub Copilot & Claude Code</p>
+        </footer>
       </main>
-
-      <div className="mt-6">
-        <footer className="section-container text-center">
-        <p className="text-sm text-gray-500 whitespace-pre-line">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.{'\n'}Created by {groomName}, GitHub Copilot & Claude Code</p>
-      </footer>
-      </div>
     </>
   )
 }
