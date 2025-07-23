@@ -128,7 +128,7 @@ const Main: React.FC = () => {
       )}
 
       <main className="px-4 md:px-6 space-y-6">
-        <div className="section-container text-center space-y-4">
+        <div className="section-container text-center space-y-4 bg-white rounded-xl shadow-sm">
           <img src={headerImage.src} alt="Header Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
         </div>
         {/* ご挨拶セクションをCardに変更 */}
@@ -352,7 +352,7 @@ const Main: React.FC = () => {
           </div>
         </section>
 
-        <div className="section-container text-center my-8">
+        <div className="section-container text-center my-8 bg-white rounded-xl shadow-sm">
           <img src={middleImage.src} alt="Middle Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
         </div>
 
