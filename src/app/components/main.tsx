@@ -37,14 +37,16 @@ const Main: React.FC = () => {
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setFiles(Array.from(event.target.files)); // 選択されたファイルを配列に変換して保存
+      const selectedFiles = Array.from(event.target.files);
+      setFiles(selectedFiles);
+      await handleUpload(selectedFiles); // ファイル選択後に即座にアップロード
     }
   };
 
-  const handleUpload = async () => {
-    if (files.length === 0) {
+  const handleUpload = async (filesToUpload = files) => {
+    if (filesToUpload.length === 0) {
       setUploadStatus('ファイルを選択してください ');
       return;
     }
@@ -53,7 +55,7 @@ const Main: React.FC = () => {
     setUploadStatus('アップロード中...');
 
     try {
-      const uploadPromises = files.map((file) => {
+      const uploadPromises = filesToUpload.map((file) => {
         return new Promise<void>((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -137,19 +139,20 @@ const Main: React.FC = () => {
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">ご挨拶</h2>
           <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">
-            {`拝啓
-晩秋の候 
+            {`拝啓　晩秋の候 
 皆様にはますますご健勝のこととお慶び申し上げます
 
 このたび 
-私たちは`}{dateText}{`に結婚式を挙げる運びとなりました
+私たちは`}{dateText}{`に
+結婚式を挙げる運びとなりました
 
 これまで私たちを支えていただきました皆様へ 
 日頃の感謝の気持ちをお伝えし 
 心に残るひとときを共に過ごしたく存じます
 
 つきましては 誠に勝手ながら下記により
-挙式および披露宴を執り行いますので ご多用中とは存じますが 
+挙式および披露宴を執り行いますので
+ご多用中とは存じますが 
 ぜひご出席賜りますようお願い申し上げます
 敬具`}
           </p>
@@ -162,7 +165,7 @@ const Main: React.FC = () => {
             </div>
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">お願い</h2>
-          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">まだ回答されていない方は こちらから出席確認を行なってください</p>
+          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">こちらから出席確認をお願いします</p>
           <div className="space-y-3 pt-2">
           <Button
             variant="contained"
@@ -189,7 +192,7 @@ const Main: React.FC = () => {
 
             <div className="pt-4 border-t border-gray-200">
               <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed  mb-3">
-                まだ友達追加されていない方は こちらから結婚式公式Lineアカウントの友達追加をお願いします
+                こちらから結婚式公式Lineアカウントの友達追加をお願いします
               </p>
               <Button
                 variant="contained"
@@ -283,7 +286,7 @@ const Main: React.FC = () => {
             </div>
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">写真</h2>
-          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">撮影された写真・動画はこちらにアップロードお願いします</p>
+          <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">撮影された写真・動画はこちらにアップロードをお願いします</p>
           <div className="space-y-3 pt-2">
           <input 
             type="file" 
@@ -294,20 +297,14 @@ const Main: React.FC = () => {
           />
           <Button
             variant="contained"
-            onClick={() => {
-              if (files.length === 0) {
-                document.getElementById('file-input')?.click();
-              } else {
-                handleUpload();
-              }
-            }}
+            onClick={() => document.getElementById('file-input')?.click()}
             className="modern-button"
             sx={{ 
-              backgroundColor: files.length === 0 ? '#9333ea' : '#4285F4', 
+              backgroundColor: '#9333ea', 
               color: '#fff',
               '&:hover': { 
-                backgroundColor: files.length === 0 ? '#7c3aed' : '#3367D6',
-                boxShadow: files.length === 0 ? '0 6px 20px 0 rgba(147, 51, 234, 0.4)' : '0 6px 20px 0 rgba(66, 133, 244, 0.4)',
+                backgroundColor: '#7c3aed',
+                boxShadow: '0 6px 20px 0 rgba(147, 51, 234, 0.4)',
                 transform: 'translateY(-2px)'
               },
               borderRadius: '25px',
@@ -315,7 +312,7 @@ const Main: React.FC = () => {
               fontSize: '16px',
               fontWeight: 600,
               textTransform: 'none',
-              boxShadow: files.length === 0 ? '0 4px 14px 0 rgba(147, 51, 234, 0.3)' : '0 4px 14px 0 rgba(66, 133, 244, 0.3)',
+              boxShadow: '0 4px 14px 0 rgba(147, 51, 234, 0.3)',
               '&:disabled': {
                 backgroundColor: '#9CA3AF',
                 transform: 'none'
@@ -323,13 +320,8 @@ const Main: React.FC = () => {
             }}
             disabled={loading}
           >
-            {files.length === 0 ? 'ファイルを選択' : 'アップロード'}
+            {loading ? 'アップロード中...' : '写真・動画をアップロード'}
           </Button>
-          {files.length > 0 && (
-            <Typography variant="body2" color="text.secondary">
-              {files.length}個のファイルが選択されています
-            </Typography>
-          )}
           {loading && <CircularProgress />}
           <Typography variant="body2" color="text.secondary">
             {uploadStatus}
@@ -359,8 +351,8 @@ const Main: React.FC = () => {
           </div>
         </section>
 
-        <div className="flex justify-center my-8">
-          <img src={middleImage.src} alt="Middle Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl" />
+        <div className="section-container text-center my-8">
+          <img src={middleImage.src} alt="Middle Image" className="w-full max-w-sm object-contain aspect-auto rounded-xl mx-auto" />
         </div>
 
         <section id="contact" className="section-container text-center space-y-4">
@@ -371,7 +363,7 @@ const Main: React.FC = () => {
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">お問い合わせ</h2>
           <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">
-            {`何かご不明な点や困りごとがございましたら こちらにメールをお願いします\n`}
+            {`ご不明な点や困りごとがございましたら こちらにメールをお願いします\n`}
             <a 
               href={`mailto:${emailAddress}`}
               className="text-rose-500 hover:text-rose-600 underline break-all"
@@ -383,8 +375,9 @@ const Main: React.FC = () => {
       </main>
 
       <div className="mt-6">
-        <footer className="section-container text-center">
+        <footer className="section-container text-center space-y-2">
         <p className="text-base font-medium text-gray-600">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.</p>
+        <p className="text-sm text-gray-500">Created by {groomName}, GitHub Copilot & Claude Code</p>
       </footer>
       </div>
     </>
