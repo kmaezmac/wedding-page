@@ -213,7 +213,7 @@ const Main: React.FC = () => {
                   textTransform: 'none',
                   boxShadow: '0 4px 14px 0 rgba(6, 199, 85, 0.3)'
                 }}>
-                Line公式アカウントを友達追加
+                Lineアカウントを友達追加
               </Button>
             </div>
           </div>
@@ -300,11 +300,11 @@ const Main: React.FC = () => {
             onClick={() => document.getElementById('file-input')?.click()}
             className="modern-button"
             sx={{ 
-              backgroundColor: '#9333ea', 
+              backgroundColor: '#2563eb', 
               color: '#fff',
               '&:hover': { 
-                backgroundColor: '#7c3aed',
-                boxShadow: '0 6px 20px 0 rgba(147, 51, 234, 0.4)',
+                backgroundColor: '#1d4ed8',
+                boxShadow: '0 6px 20px 0 rgba(37, 99, 235, 0.4)',
                 transform: 'translateY(-2px)'
               },
               borderRadius: '25px',
@@ -312,7 +312,7 @@ const Main: React.FC = () => {
               fontSize: '16px',
               fontWeight: 600,
               textTransform: 'none',
-              boxShadow: '0 4px 14px 0 rgba(147, 51, 234, 0.3)',
+              boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.3)',
               '&:disabled': {
                 backgroundColor: '#9CA3AF',
                 transform: 'none'
@@ -346,7 +346,7 @@ const Main: React.FC = () => {
               boxShadow: '0 4px 14px 0 rgba(16, 185, 129, 0.3)'
             }}
           >
-            アップロードした写真・動画を確認
+            写真・動画の確認
           </Button>
           </div>
         </section>
@@ -375,9 +375,8 @@ const Main: React.FC = () => {
       </main>
 
       <div className="mt-6">
-        <footer className="section-container text-center space-y-2">
-        <p className="text-base font-medium text-gray-600">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved.</p>
-        <p className="text-sm text-gray-500">Created by {groomName}, GitHub Copilot & Claude Code</p>
+        <footer className="section-container text-center">
+        <p className="text-sm text-gray-500">© {new Date().getFullYear()} {groomName} & {brideName} All rights reserved. Created by {groomName}, GitHub Copilot & Claude Code</p>
       </footer>
       </div>
     </>
