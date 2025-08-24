@@ -193,7 +193,7 @@ const Main: React.FC = () => {
 
             <div className="pt-4 border-t border-gray-200">
               <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed  mb-3">
-                結婚式公式Lineアカウントの{'\n'}友達追加をお願いします
+                結婚式公式LINEアカウントの{'\n'}友達追加をお願いします
               </p>
               <Button
                 variant="contained"
@@ -364,7 +364,7 @@ const Main: React.FC = () => {
           </div>
           <h2 className="text-2xl md:text-3xl font-serif text-gray-800 mb-3">お問い合わせ</h2>
           <p className="text-base md:text-lg text-gray-600 whitespace-pre-line leading-relaxed ">
-            {`ご不明な点や困りごとがございましたら こちらにメールをお願いします\n`}
+            {`ご不明な点や困りごとがございましたら こちらにメールもしくはLINEにお願いします\n`}
             <a 
               href={`mailto:${emailAddress}`}
               className="text-rose-500 hover:text-rose-600 underline break-all"
