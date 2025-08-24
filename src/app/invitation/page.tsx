@@ -191,9 +191,9 @@ export default function RSVPPage() {
                 <Typography variant="h6" gutterBottom sx={{ fontSize: '16px', fontWeight: 600, color: '#2d3748', mb: 2 }}>
                   個人情報の取り扱いについて
                 </Typography>
-                <Typography variant="body2" sx={{ fontSize: '14px', color: '#4a5568', mb: 2 }}>
-                  ご入力いただいた個人情報は 結婚式の出欠確認の目的でのみ使用し
-                  ご本人の同意なしに第三者に提供することはありません また結婚式終了後に削除いたします
+                <Typography variant="body2" sx={{ fontSize: '14px', color: '#4a5568', mb: 2, whiteSpace: 'pre-line' }}>
+                  {`ご入力いただいた個人情報は 結婚式の出欠確認の目的でのみ使用し
+ご本人の同意なしに第三者に提供することはありません また結婚式終了後に削除いたします`}
                 </Typography>
               </Box>
               

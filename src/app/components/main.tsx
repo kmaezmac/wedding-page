@@ -42,6 +42,22 @@ const Main: React.FC = () => {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
+      
+      // ファイル形式をチェック
+      const allowedTypes = [
+        // 画像形式
+        'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif',
+        // 動画形式
+        'video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv', 'video/3gp'
+      ];
+      
+      const invalidFiles = selectedFiles.filter(file => !allowedTypes.includes(file.type));
+      
+      if (invalidFiles.length > 0) {
+        setUploadStatus(`対応していないファイル形式が含まれています: ${invalidFiles.map(f => f.name).join(', ')}`);
+        return;
+      }
+      
       setFiles(selectedFiles);
       await handleUpload(selectedFiles); // ファイル選択後に即座にアップロード
     }
@@ -293,6 +309,7 @@ const Main: React.FC = () => {
             type="file" 
             id="file-input"
             multiple 
+            accept="image/*,video/*"
             onChange={handleFileChange} 
             className="hidden"
           />
