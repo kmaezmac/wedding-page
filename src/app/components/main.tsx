@@ -214,7 +214,7 @@ const Main: React.FC = () => {
                   textTransform: 'none',
                   boxShadow: '0 4px 14px 0 rgba(6, 199, 85, 0.3)'
                 }}>
-                Lineアカウントを友達追加
+                LINEアカウントを友達追加
               </Button>
             </div>
           </div>
