@@ -185,6 +185,24 @@ export default function RSVPPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
+              
+              {/* 個人情報の取り扱いについて */}
+              <Box sx={{ mt: 3, p: 3, backgroundColor: '#fef7f7', borderRadius: '16px', border: '1px solid #fed7d7' }}>
+                <Typography variant="h6" gutterBottom sx={{ fontSize: '16px', fontWeight: 600, color: '#2d3748', mb: 2 }}>
+                  個人情報の取り扱いについて
+                </Typography>
+                <Typography variant="body2" sx={{ fontSize: '14px', color: '#4a5568', mb: 2 }}>
+                  ご入力いただいた個人情報は、以下の目的でのみ使用いたします：
+                </Typography>
+                <Box component="ul" sx={{ fontSize: '13px', color: '#4a5568', ml: 2, '& li': { mb: 0.5 } }}>
+                  <li>結婚式の出欠確認</li>
+                </Box>
+                <Typography variant="body2" sx={{ fontSize: '13px', color: '#4a5568', mt: 2 }}>
+                  いただいた情報は ご本人の同意なしに第三者に提供することはありません
+                  また結婚式終了後に削除いたします
+                </Typography>
+              </Box>
+              
               <Button
                 type="submit"
                 fullWidth
