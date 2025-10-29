@@ -92,22 +92,55 @@ const credentials = {
     const buffer = Buffer.from(base64File.split(',')[1], 'base64');
     console.log("fileName " + fileName)
     console.log("mimeType " + mimeType)
+    console.log("fileSize " + buffer.length)
 
-    const response = await drive.files.create({
-      requestBody: {
-        name: fileName,
-        mimeType: mimeType,
-        parents: [directoryId],
-      },
-      media: {
-        mimeType: mimeType,
-        body: new Stream.PassThrough().end(buffer),
-      },
-    });
-    console.log("ダンダダン")
-  
-    return {
+    // 5MB以上のファイルはresumable uploadを使用
+    const FIVE_MB = 5 * 1024 * 1024;
+
+    if (buffer.length > FIVE_MB) {
+      // Resumable upload
+      const response = await drive.files.create({
+        requestBody: {
+          name: fileName,
+          mimeType: mimeType,
+          parents: [directoryId],
+        },
+        media: {
+          mimeType: mimeType,
+          body: new Stream.PassThrough().end(buffer),
+        },
+        fields: 'id',
+      }, {
+        // resumableアップロードを有効化
+        onUploadProgress: (evt) => {
+          const progress = (evt.bytesRead / buffer.length) * 100;
+          console.log(`Upload progress: ${progress.toFixed(2)}%`);
+        },
+      });
+      console.log("ダンダダン (resumable)")
+
+      return {
         message: 'アップロード成功！',
         url: `https://drive.google.com/file/d/${response.data.id}`,
       };
+    } else {
+      // 5MB以下は通常のアップロード
+      const response = await drive.files.create({
+        requestBody: {
+          name: fileName,
+          mimeType: mimeType,
+          parents: [directoryId],
+        },
+        media: {
+          mimeType: mimeType,
+          body: new Stream.PassThrough().end(buffer),
+        },
+      });
+      console.log("ダンダダン")
+
+      return {
+        message: 'アップロード成功！',
+        url: `https://drive.google.com/file/d/${response.data.id}`,
+      };
+    }
   }

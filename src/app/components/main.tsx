@@ -48,16 +48,16 @@ const Main: React.FC = () => {
         // 画像形式
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif',
         // 動画形式
-        'video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv', 'video/3gp'
+        'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv', 'video/x-flv', 'video/webm', 'video/x-matroska', 'video/3gpp'
       ];
       
       const invalidFiles = selectedFiles.filter(file => !allowedTypes.includes(file.type));
-      
+
       if (invalidFiles.length > 0) {
         setUploadStatus(`対応していないファイル形式が含まれています: ${invalidFiles.map(f => f.name).join(', ')}`);
         return;
       }
-      
+
       setFiles(selectedFiles);
       await handleUpload(selectedFiles); // ファイル選択後に即座にアップロード
     }
