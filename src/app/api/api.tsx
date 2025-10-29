@@ -85,7 +85,7 @@ const credentials = {
   });
 
   // クライアントからのログをサーバー側に記録
-  export async function logToServer(message: string, data?: any) {
+  export async function logToServer(message: string, data?: unknown) {
     console.log('[CLIENT LOG]', message, data || '');
   }
 
