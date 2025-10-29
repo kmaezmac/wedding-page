@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import headerImage from './header.png';
 import middleImage from './middle.png';
 import 'dayjs/locale/ja';
-import { uploadFileToDrive, logToServer } from '../api/api';
+import { logToServer } from '../api/api';
 
 dayjs.locale('ja');
 
@@ -138,7 +138,26 @@ const Main: React.FC = () => {
               const convertMsg = `[${index + 1}/${filesToUpload.length}] Base64変換完了、アップロード開始: ${file.name}`;
               console.log(convertMsg);
               await logToServer(convertMsg);
-              await uploadFileToDrive(base64File, file.name, file.type);
+
+              // API Routeを呼び出し
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  base64File: base64File,
+                  fileName: file.name,
+                  mimeType: file.type,
+                }),
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'アップロードに失敗しました');
+              }
+
+              await response.json(); // レスポンスを消費
               const successMsg = `[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`;
               console.log(successMsg);
               await logToServer(successMsg);
