@@ -42,22 +42,57 @@ const Main: React.FC = () => {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
-      
-      // ファイル形式をチェック
+
+      console.log('=== ファイル選択開始 ===');
+      console.log('選択されたファイル数:', selectedFiles.length);
+      selectedFiles.forEach((file, index) => {
+        console.log(`ファイル${index + 1}:`, {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          sizeInMB: (file.size / 1024 / 1024).toFixed(2) + 'MB'
+        });
+      });
+
+      // ファイル形式をチェック（MIMEタイプと拡張子の両方を確認）
       const allowedTypes = [
         // 画像形式
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif',
         // 動画形式
         'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv', 'video/x-flv', 'video/webm', 'video/x-matroska', 'video/3gpp'
       ];
-      
-      const invalidFiles = selectedFiles.filter(file => !allowedTypes.includes(file.type));
+
+      const allowedExtensions = [
+        // 画像拡張子
+        '.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif',
+        // 動画拡張子
+        '.mp4', '.mov', '.avi', '.wmv', '.flv', '.webm', '.mkv', '.3gp'
+      ];
+
+      const invalidFiles = selectedFiles.filter(file => {
+        const hasValidMimeType = file.type && allowedTypes.includes(file.type);
+        const hasValidExtension = allowedExtensions.some(ext =>
+          file.name.toLowerCase().endsWith(ext)
+        );
+
+        // MIMEタイプが空の場合は拡張子でチェック、それ以外は両方を確認
+        if (!file.type || file.type === '') {
+          console.log(`ファイル ${file.name}: MIMEタイプが空、拡張子でチェック: ${hasValidExtension}`);
+          return !hasValidExtension;
+        }
+
+        const isValid = hasValidMimeType || hasValidExtension;
+        console.log(`ファイル ${file.name}: MIMEタイプチェック=${hasValidMimeType}, 拡張子チェック=${hasValidExtension}, 結果=${isValid}`);
+        return !isValid;
+      });
 
       if (invalidFiles.length > 0) {
+        console.error('無効なファイル形式:', invalidFiles.map(f => ({ name: f.name, type: f.type })));
         setUploadStatus(`対応していないファイル形式が含まれています: ${invalidFiles.map(f => f.name).join(', ')}`);
         return;
       }
 
+      console.log('ファイル形式チェック: OK');
       setFiles(selectedFiles);
       await handleUpload(selectedFiles); // ファイル選択後に即座にアップロード
     }
@@ -65,34 +100,46 @@ const Main: React.FC = () => {
 
   const handleUpload = async (filesToUpload = files) => {
     if (filesToUpload.length === 0) {
+      console.log('アップロード中止: ファイルが選択されていません');
       setUploadStatus('ファイルを選択してください ');
       return;
     }
 
+    console.log('=== アップロード開始 ===');
+    console.log('アップロード対象ファイル数:', filesToUpload.length);
     setLoading(true);
     setUploadStatus('アップロード中...');
 
     try {
-      const uploadPromises = filesToUpload.map((file) => {
+      const uploadPromises = filesToUpload.map((file, index) => {
         return new Promise<void>((resolve, reject) => {
+          console.log(`[${index + 1}/${filesToUpload.length}] ファイル読み込み開始: ${file.name}`);
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onloadend = async () => {
             try {
               const base64File = reader.result as string;
-              await uploadFileToDrive(base64File, file.name, file.type); // 各ファイルをアップロード
+              console.log(`[${index + 1}/${filesToUpload.length}] Base64変換完了、アップロード開始: ${file.name}`);
+              await uploadFileToDrive(base64File, file.name, file.type);
+              console.log(`[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`);
               resolve();
             } catch (error) {
+              console.error(`[${index + 1}/${filesToUpload.length}] アップロード失敗: ${file.name}`, error);
               reject(error);
             }
+          };
+          reader.onerror = (error) => {
+            console.error(`[${index + 1}/${filesToUpload.length}] ファイル読み込み失敗: ${file.name}`, error);
+            reject(error);
           };
         });
       });
 
-      await Promise.all(uploadPromises); // 全てのアップロードが完了するまで待機
+      await Promise.all(uploadPromises);
+      console.log('=== 全ファイルのアップロード完了 ===');
       setUploadStatus('全てのファイルがアップロードされました ');
     } catch (error) {
-      console.error('アップロードエラー:', error);
+      console.error('=== アップロードエラー ===', error);
       setUploadStatus('一部または全てのファイルのアップロードに失敗しました ');
     } finally {
       setLoading(false);

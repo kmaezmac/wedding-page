@@ -85,62 +85,107 @@ const credentials = {
   });
 
   export async function uploadFileToDrive(base64File: string, fileName: string, mimeType: string) {
-    console.log(base64File)
-    const drive = google.drive({ version: 'v3', auth });
-    const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
-    console.log(directoryId)
-    const buffer = Buffer.from(base64File.split(',')[1], 'base64');
-    console.log("fileName " + fileName)
-    console.log("mimeType " + mimeType)
-    console.log("fileSize " + buffer.length)
+    console.log('=== [SERVER] uploadFileToDrive 開始 ===');
+    console.log('[SERVER] ファイル名:', fileName);
+    console.log('[SERVER] MIMEタイプ (受信):', mimeType);
 
-    // 5MB以上のファイルはresumable uploadを使用
-    const FIVE_MB = 5 * 1024 * 1024;
+    try {
+      const drive = google.drive({ version: 'v3', auth });
+      const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
+      console.log('[SERVER] ディレクトリID:', directoryId);
 
-    if (buffer.length > FIVE_MB) {
-      // Resumable upload
-      const response = await drive.files.create({
-        requestBody: {
-          name: fileName,
-          mimeType: mimeType,
-          parents: [directoryId],
-        },
-        media: {
-          mimeType: mimeType,
-          body: new Stream.PassThrough().end(buffer),
-        },
-        fields: 'id',
-      }, {
-        // resumableアップロードを有効化
-        onUploadProgress: (evt) => {
-          const progress = (evt.bytesRead / buffer.length) * 100;
-          console.log(`Upload progress: ${progress.toFixed(2)}%`);
-        },
-      });
-      console.log("ダンダダン (resumable)")
+      const buffer = Buffer.from(base64File.split(',')[1], 'base64');
+      const fileSizeInMB = (buffer.length / 1024 / 1024).toFixed(2);
+      console.log('[SERVER] ファイルサイズ:', buffer.length, 'bytes (', fileSizeInMB, 'MB)');
 
-      return {
-        message: 'アップロード成功！',
-        url: `https://drive.google.com/file/d/${response.data.id}`,
-      };
-    } else {
-      // 5MB以下は通常のアップロード
-      const response = await drive.files.create({
-        requestBody: {
-          name: fileName,
-          mimeType: mimeType,
-          parents: [directoryId],
-        },
-        media: {
-          mimeType: mimeType,
-          body: new Stream.PassThrough().end(buffer),
-        },
-      });
-      console.log("ダンダダン")
+      // MIMEタイプが空の場合、ファイル拡張子から推測
+      let finalMimeType = mimeType;
+      if (!finalMimeType || finalMimeType === '') {
+        const extension = fileName.toLowerCase().split('.').pop();
+        const mimeTypeMap: { [key: string]: string } = {
+          // 画像
+          'jpg': 'image/jpeg',
+          'jpeg': 'image/jpeg',
+          'png': 'image/png',
+          'gif': 'image/gif',
+          'webp': 'image/webp',
+          'heic': 'image/heic',
+          'heif': 'image/heif',
+          // 動画
+          'mp4': 'video/mp4',
+          'mov': 'video/quicktime',
+          'avi': 'video/x-msvideo',
+          'wmv': 'video/x-ms-wmv',
+          'flv': 'video/x-flv',
+          'webm': 'video/webm',
+          'mkv': 'video/x-matroska',
+          '3gp': 'video/3gpp'
+        };
+        finalMimeType = mimeTypeMap[extension || ''] || 'application/octet-stream';
+        console.log('[SERVER] MIMEタイプを推測:', finalMimeType, '(拡張子:', extension, ')');
+      } else {
+        console.log('[SERVER] MIMEタイプ (使用):', finalMimeType);
+      }
 
-      return {
-        message: 'アップロード成功！',
-        url: `https://drive.google.com/file/d/${response.data.id}`,
-      };
+      // 5MB以上のファイルはresumable uploadを使用
+      const FIVE_MB = 5 * 1024 * 1024;
+
+      if (buffer.length > FIVE_MB) {
+        console.log('[SERVER] 5MB超: Resumable uploadを使用します');
+        // Resumable upload
+        const response = await drive.files.create({
+          requestBody: {
+            name: fileName,
+            mimeType: finalMimeType,
+            parents: [directoryId],
+          },
+          media: {
+            mimeType: finalMimeType,
+            body: new Stream.PassThrough().end(buffer),
+          },
+          fields: 'id',
+        }, {
+          // resumableアップロードを有効化
+          onUploadProgress: (evt) => {
+            const progress = (evt.bytesRead / buffer.length) * 100;
+            console.log(`[SERVER] Upload progress: ${progress.toFixed(2)}%`);
+          },
+        });
+        console.log('[SERVER] アップロード成功 (resumable):', response.data.id);
+
+        return {
+          message: 'アップロード成功！',
+          url: `https://drive.google.com/file/d/${response.data.id}`,
+        };
+      } else {
+        console.log('[SERVER] 5MB以下: 通常のアップロードを使用します');
+        // 5MB以下は通常のアップロード
+        const response = await drive.files.create({
+          requestBody: {
+            name: fileName,
+            mimeType: finalMimeType,
+            parents: [directoryId],
+          },
+          media: {
+            mimeType: finalMimeType,
+            body: new Stream.PassThrough().end(buffer),
+          },
+        });
+        console.log('[SERVER] アップロード成功 (通常):', response.data.id);
+
+        return {
+          message: 'アップロード成功！',
+          url: `https://drive.google.com/file/d/${response.data.id}`,
+        };
+      }
+    } catch (error) {
+      console.error('[SERVER] === アップロードエラー ===');
+      console.error('[SERVER] ファイル名:', fileName);
+      console.error('[SERVER] エラー詳細:', error);
+      if (error instanceof Error) {
+        console.error('[SERVER] エラーメッセージ:', error.message);
+        console.error('[SERVER] スタックトレース:', error.stack);
+      }
+      throw error;
     }
   }
