@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import headerImage from './header.png';
 import middleImage from './middle.png';
 import 'dayjs/locale/ja';
-import { uploadFileToDrive } from '../api/api';
+import { uploadFileToDrive, logToServer } from '../api/api';
 
 dayjs.locale('ja');
 
@@ -44,14 +44,18 @@ const Main: React.FC = () => {
       const selectedFiles = Array.from(event.target.files);
 
       console.log('=== ファイル選択開始 ===');
+      await logToServer('=== ファイル選択開始 ===');
       console.log('選択されたファイル数:', selectedFiles.length);
-      selectedFiles.forEach((file, index) => {
-        console.log(`ファイル${index + 1}:`, {
+      await logToServer('選択されたファイル数:', selectedFiles.length);
+      selectedFiles.forEach(async (file, index) => {
+        const fileInfo = {
           name: file.name,
           type: file.type,
           size: file.size,
           sizeInMB: (file.size / 1024 / 1024).toFixed(2) + 'MB'
-        });
+        };
+        console.log(`ファイル${index + 1}:`, fileInfo);
+        await logToServer(`ファイル${index + 1}:`, fileInfo);
       });
 
       // ファイル形式をチェック（MIMEタイプと拡張子の両方を確認）
@@ -77,22 +81,29 @@ const Main: React.FC = () => {
 
         // MIMEタイプが空の場合は拡張子でチェック、それ以外は両方を確認
         if (!file.type || file.type === '') {
-          console.log(`ファイル ${file.name}: MIMEタイプが空、拡張子でチェック: ${hasValidExtension}`);
+          const logMsg = `ファイル ${file.name}: MIMEタイプが空、拡張子でチェック: ${hasValidExtension}`;
+          console.log(logMsg);
+          logToServer(logMsg);
           return !hasValidExtension;
         }
 
         const isValid = hasValidMimeType || hasValidExtension;
-        console.log(`ファイル ${file.name}: MIMEタイプチェック=${hasValidMimeType}, 拡張子チェック=${hasValidExtension}, 結果=${isValid}`);
+        const logMsg = `ファイル ${file.name}: MIMEタイプチェック=${hasValidMimeType}, 拡張子チェック=${hasValidExtension}, 結果=${isValid}`;
+        console.log(logMsg);
+        logToServer(logMsg);
         return !isValid;
       });
 
       if (invalidFiles.length > 0) {
-        console.error('無効なファイル形式:', invalidFiles.map(f => ({ name: f.name, type: f.type })));
+        const invalidInfo = invalidFiles.map(f => ({ name: f.name, type: f.type }));
+        console.error('無効なファイル形式:', invalidInfo);
+        await logToServer('無効なファイル形式:', invalidInfo);
         setUploadStatus(`対応していないファイル形式が含まれています: ${invalidFiles.map(f => f.name).join(', ')}`);
         return;
       }
 
       console.log('ファイル形式チェック: OK');
+      await logToServer('ファイル形式チェック: OK');
       setFiles(selectedFiles);
       await handleUpload(selectedFiles); // ファイル選択後に即座にアップロード
     }
@@ -101,35 +112,48 @@ const Main: React.FC = () => {
   const handleUpload = async (filesToUpload = files) => {
     if (filesToUpload.length === 0) {
       console.log('アップロード中止: ファイルが選択されていません');
+      await logToServer('アップロード中止: ファイルが選択されていません');
       setUploadStatus('ファイルを選択してください ');
       return;
     }
 
     console.log('=== アップロード開始 ===');
+    await logToServer('=== アップロード開始 ===');
     console.log('アップロード対象ファイル数:', filesToUpload.length);
+    await logToServer('アップロード対象ファイル数:', filesToUpload.length);
     setLoading(true);
     setUploadStatus('アップロード中...');
 
     try {
       const uploadPromises = filesToUpload.map((file, index) => {
         return new Promise<void>((resolve, reject) => {
-          console.log(`[${index + 1}/${filesToUpload.length}] ファイル読み込み開始: ${file.name}`);
+          const startMsg = `[${index + 1}/${filesToUpload.length}] ファイル読み込み開始: ${file.name}`;
+          console.log(startMsg);
+          logToServer(startMsg);
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onloadend = async () => {
             try {
               const base64File = reader.result as string;
-              console.log(`[${index + 1}/${filesToUpload.length}] Base64変換完了、アップロード開始: ${file.name}`);
+              const convertMsg = `[${index + 1}/${filesToUpload.length}] Base64変換完了、アップロード開始: ${file.name}`;
+              console.log(convertMsg);
+              await logToServer(convertMsg);
               await uploadFileToDrive(base64File, file.name, file.type);
-              console.log(`[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`);
+              const successMsg = `[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`;
+              console.log(successMsg);
+              await logToServer(successMsg);
               resolve();
             } catch (error) {
-              console.error(`[${index + 1}/${filesToUpload.length}] アップロード失敗: ${file.name}`, error);
+              const errorMsg = `[${index + 1}/${filesToUpload.length}] アップロード失敗: ${file.name}`;
+              console.error(errorMsg, error);
+              await logToServer(errorMsg, error);
               reject(error);
             }
           };
-          reader.onerror = (error) => {
-            console.error(`[${index + 1}/${filesToUpload.length}] ファイル読み込み失敗: ${file.name}`, error);
+          reader.onerror = async (error) => {
+            const readErrorMsg = `[${index + 1}/${filesToUpload.length}] ファイル読み込み失敗: ${file.name}`;
+            console.error(readErrorMsg, error);
+            await logToServer(readErrorMsg, error);
             reject(error);
           };
         });
@@ -137,9 +161,11 @@ const Main: React.FC = () => {
 
       await Promise.all(uploadPromises);
       console.log('=== 全ファイルのアップロード完了 ===');
+      await logToServer('=== 全ファイルのアップロード完了 ===');
       setUploadStatus('全てのファイルがアップロードされました ');
     } catch (error) {
       console.error('=== アップロードエラー ===', error);
+      await logToServer('=== アップロードエラー ===', error);
       setUploadStatus('一部または全てのファイルのアップロードに失敗しました ');
     } finally {
       setLoading(false);

@@ -84,6 +84,11 @@ const credentials = {
     scopes: ['https://www.googleapis.com/auth/drive.file'],
   });
 
+  // クライアントからのログをサーバー側に記録
+  export async function logToServer(message: string, data?: any) {
+    console.log('[CLIENT LOG]', message, data || '');
+  }
+
   export async function uploadFileToDrive(base64File: string, fileName: string, mimeType: string) {
     console.log('=== [SERVER] uploadFileToDrive 開始 ===');
     console.log('[SERVER] ファイル名:', fileName);
