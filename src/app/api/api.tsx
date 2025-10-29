@@ -90,9 +90,14 @@ const credentials = {
   }
 
   export async function uploadFileToDrive(base64File: string, fileName: string, mimeType: string) {
-    console.log('=== [SERVER] uploadFileToDrive 開始 ===');
-    console.log('[SERVER] ファイル名:', fileName);
-    console.log('[SERVER] MIMEタイプ (受信):', mimeType);
+    const timestamp = new Date().toISOString();
+    console.log('\n\n========================================');
+    console.log('[1] uploadFileToDrive 開始');
+    console.log('[1] タイムスタンプ:', timestamp);
+    console.log('[1] ファイル名:', fileName);
+    console.log('[1] MIMEタイプ (受信):', mimeType);
+    console.log('[1] Base64データ長:', base64File.length);
+    console.log('========================================\n');
 
     // MIMEタイプをここで宣言してcatchブロックからもアクセス可能に
     let finalMimeType = mimeType;
@@ -100,11 +105,12 @@ const credentials = {
     try {
       const drive = google.drive({ version: 'v3', auth });
       const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
-      console.log('[SERVER] ディレクトリID:', directoryId);
+      console.log('[2] ディレクトリID:', directoryId);
+      console.log('[2] ディレクトリID (環境変数名):', 'NEXT_PUBLIC_DIRECTORY_ID');
 
       const buffer = Buffer.from(base64File.split(',')[1], 'base64');
       const fileSizeInMB = (buffer.length / 1024 / 1024).toFixed(2);
-      console.log('[SERVER] ファイルサイズ:', buffer.length, 'bytes (', fileSizeInMB, 'MB)');
+      console.log('[3] ファイルサイズ:', buffer.length, 'bytes (', fileSizeInMB, 'MB)');
 
       // MIMEタイプが空の場合、ファイル拡張子から推測
       if (!finalMimeType || finalMimeType === '') {
@@ -129,19 +135,22 @@ const credentials = {
           '3gp': 'video/3gpp'
         };
         finalMimeType = mimeTypeMap[extension || ''] || 'application/octet-stream';
-        console.log('[SERVER] MIMEタイプを推測:', finalMimeType, '(拡張子:', extension, ')');
+        console.log('[4] MIMEタイプを推測:', finalMimeType, '(拡張子:', extension, ')');
       } else {
-        console.log('[SERVER] MIMEタイプ (使用):', finalMimeType);
+        console.log('[4] MIMEタイプ (使用):', finalMimeType);
       }
 
       // 5MB以上のファイルはresumable uploadを使用
       const FIVE_MB = 5 * 1024 * 1024;
 
       const folderUrl = `https://drive.google.com/drive/folders/${directoryId}`;
-      console.log('[SERVER] アップロード先フォルダURL:', folderUrl);
+      console.log('\n--- [5] アップロード先情報 ---');
+      console.log('[5] フォルダID:', directoryId);
+      console.log('[5] フォルダURL:', folderUrl);
+      console.log('-----------------------------\n');
 
       if (buffer.length > FIVE_MB) {
-        console.log('[SERVER] 5MB超: Resumable uploadを使用します');
+        console.log('[6] 5MB超: Resumable uploadを使用します');
         // Resumable upload
         const response = await drive.files.create({
           requestBody: {
@@ -162,16 +171,20 @@ const credentials = {
           },
         });
 
-        console.log('[SERVER] === アップロード成功 (resumable) ===');
-        console.log('[SERVER] レスポンス全体:', JSON.stringify(response.data, null, 2));
-        console.log('[SERVER] ファイルID:', response.data.id);
-        console.log('[SERVER] ファイル名:', response.data.name);
-        console.log('[SERVER] MIMEタイプ:', response.data.mimeType);
-        console.log('[SERVER] ファイルサイズ:', response.data.size);
+        console.log('\n========================================');
+        console.log('[7] ✓ アップロード成功 (resumable)');
+        console.log('========================================');
+        console.log('[7] レスポンス全体:', JSON.stringify(response.data, null, 2));
+        console.log('[7] ファイルID:', response.data.id);
+        console.log('[7] ファイル名:', response.data.name);
+        console.log('[7] MIMEタイプ:', response.data.mimeType);
+        console.log('[7] ファイルサイズ:', response.data.size);
 
         const fileUrl = `https://drive.google.com/file/d/${response.data.id}`;
-        console.log('[SERVER] ファイルURL:', fileUrl);
-        console.log('[SERVER] フォルダURL:', folderUrl);
+        console.log('\n--- [8] アップロード結果URL ---');
+        console.log('[8] ファイルURL:', fileUrl);
+        console.log('[8] フォルダURL:', folderUrl);
+        console.log('-------------------------------\n');
 
         if (!response.data.id) {
           console.error('[SERVER] 警告: ファイルIDが取得できませんでした！');
@@ -184,7 +197,7 @@ const credentials = {
           fileId: response.data.id,
         };
       } else {
-        console.log('[SERVER] 5MB以下: 通常のアップロードを使用します');
+        console.log('[9] 5MB以下: 通常のアップロードを使用します');
         // 5MB以下は通常のアップロード
         const response = await drive.files.create({
           requestBody: {
@@ -199,16 +212,20 @@ const credentials = {
           fields: 'id,name,mimeType,size,webViewLink,webContentLink',
         });
 
-        console.log('[SERVER] === アップロード成功 (通常) ===');
-        console.log('[SERVER] レスポンス全体:', JSON.stringify(response.data, null, 2));
-        console.log('[SERVER] ファイルID:', response.data.id);
-        console.log('[SERVER] ファイル名:', response.data.name);
-        console.log('[SERVER] MIMEタイプ:', response.data.mimeType);
-        console.log('[SERVER] ファイルサイズ:', response.data.size);
+        console.log('\n========================================');
+        console.log('[10] ✓ アップロード成功 (通常)');
+        console.log('========================================');
+        console.log('[10] レスポンス全体:', JSON.stringify(response.data, null, 2));
+        console.log('[10] ファイルID:', response.data.id);
+        console.log('[10] ファイル名:', response.data.name);
+        console.log('[10] MIMEタイプ:', response.data.mimeType);
+        console.log('[10] ファイルサイズ:', response.data.size);
 
         const fileUrl = `https://drive.google.com/file/d/${response.data.id}`;
-        console.log('[SERVER] ファイルURL:', fileUrl);
-        console.log('[SERVER] フォルダURL:', folderUrl);
+        console.log('\n--- [11] アップロード結果URL ---');
+        console.log('[11] ファイルURL:', fileUrl);
+        console.log('[11] フォルダURL:', folderUrl);
+        console.log('-------------------------------\n');
 
         if (!response.data.id) {
           console.error('[SERVER] 警告: ファイルIDが取得できませんでした！');
@@ -222,12 +239,15 @@ const credentials = {
         };
       }
     } catch (error) {
-      console.error('[SERVER] === アップロードエラー ===');
-      console.error('[SERVER] ファイル名:', fileName);
-      console.error('[SERVER] MIMEタイプ:', mimeType);
-      console.error('[SERVER] 最終MIMEタイプ:', finalMimeType);
-      console.error('[SERVER] エラー詳細 (JSON):', JSON.stringify(error, null, 2));
-      console.error('[SERVER] エラー詳細 (toString):', String(error));
+      console.error('\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      console.error('[ERROR] ✗ アップロードエラー発生');
+      console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      console.error('[ERROR] ファイル名:', fileName);
+      console.error('[ERROR] MIMEタイプ (受信):', mimeType);
+      console.error('[ERROR] MIMEタイプ (最終):', finalMimeType);
+      console.error('\n[ERROR] エラー詳細 (JSON):');
+      console.error(JSON.stringify(error, null, 2));
+      console.error('\n[ERROR] エラー詳細 (toString):', String(error));
 
       if (error instanceof Error) {
         console.error('[SERVER] エラーメッセージ:', error.message);
