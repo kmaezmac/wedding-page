@@ -15,6 +15,32 @@ dayjs.locale('ja');
 
 
 
+// Google Drive APIのアクセストークンを取得
+async function getAccessToken(): Promise<string> {
+  const credentials = {
+    type: "service_account",
+    project_id: process.env.NEXT_PUBLIC_PROJECT_ID,
+    private_key_id: process.env.NEXT_PUBLIC_PRIVATE_KEY_ID,
+    private_key: process.env.NEXT_PUBLIC_PRIVATE_KEY!.split(String.raw`\n`).join('\n'),
+    client_email: process.env.NEXT_PUBLIC_CLIENT_EMAIL,
+    client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+  };
+
+  // JWTを作成してアクセストークンを取得
+  const response = await fetch('/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ credentials })
+  });
+
+  if (!response.ok) {
+    throw new Error('トークン取得に失敗しました');
+  }
+
+  const data = await response.json();
+  return data.accessToken;
+}
+
 const Main: React.FC = () => {
   const [dateText] = useState(
     `${process.env.NEXT_PUBLIC_DATE_YEAR}年${process.env.NEXT_PUBLIC_DATE_MONTH}月${process.env.NEXT_PUBLIC_DATE_DAY}日` || ''
@@ -125,57 +151,78 @@ const Main: React.FC = () => {
     setUploadStatus('アップロード中...');
 
     try {
-      const uploadPromises = filesToUpload.map((file, index) => {
-        return new Promise<void>((resolve, reject) => {
-          const startMsg = `[${index + 1}/${filesToUpload.length}] ファイル読み込み開始: ${file.name}`;
+      const uploadPromises = filesToUpload.map(async (file, index) => {
+        try {
+          const startMsg = `[${index + 1}/${filesToUpload.length}] アップロード開始: ${file.name}`;
           console.log(startMsg);
-          logToServer(startMsg);
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onloadend = async () => {
-            try {
-              const base64File = reader.result as string;
-              const convertMsg = `[${index + 1}/${filesToUpload.length}] Base64変換完了、アップロード開始: ${file.name}`;
-              console.log(convertMsg);
-              await logToServer(convertMsg);
+          await logToServer(startMsg);
 
-              // API Routeを呼び出し
-              const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  base64File: base64File,
-                  fileName: file.name,
-                  mimeType: file.type,
-                }),
-              });
+          // クライアント側で直接Google Drive APIを呼び出し
+          const accessToken = await getAccessToken();
+          console.log('[CLIENT] アクセストークン取得完了');
+          await logToServer('[CLIENT] アクセストークン取得完了');
 
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'アップロードに失敗しました');
-              }
+          const folderId = process.env.NEXT_PUBLIC_DIRECTORY_ID;
+          const folderUrl = `https://drive.google.com/drive/folders/${folderId}`;
+          console.log('[CLIENT] アップロード先フォルダURL:', folderUrl);
+          await logToServer('[CLIENT] アップロード先フォルダURL:', folderUrl);
 
-              await response.json(); // レスポンスを消費
-              const successMsg = `[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`;
-              console.log(successMsg);
-              await logToServer(successMsg);
-              resolve();
-            } catch (error) {
-              const errorMsg = `[${index + 1}/${filesToUpload.length}] アップロード失敗: ${file.name}`;
-              console.error(errorMsg, error);
-              await logToServer(errorMsg, error);
-              reject(error);
-            }
+          // MIMEタイプを決定
+          let finalMimeType = file.type;
+          if (!finalMimeType || finalMimeType === '') {
+            const extension = file.name.toLowerCase().split('.').pop();
+            const mimeTypeMap: { [key: string]: string } = {
+              'mp4': 'video/mp4', 'mov': 'video/quicktime', 'avi': 'video/x-msvideo',
+              'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
+            };
+            finalMimeType = mimeTypeMap[extension || ''] || 'application/octet-stream';
+            console.log('[CLIENT] MIMEタイプを推測:', finalMimeType);
+            await logToServer('[CLIENT] MIMEタイプを推測:', finalMimeType);
+          }
+
+          const metadata = {
+            name: file.name,
+            mimeType: finalMimeType,
+            parents: [folderId]
           };
-          reader.onerror = async (error) => {
-            const readErrorMsg = `[${index + 1}/${filesToUpload.length}] ファイル読み込み失敗: ${file.name}`;
-            console.error(readErrorMsg, error);
-            await logToServer(readErrorMsg, error);
-            reject(error);
-          };
-        });
+
+          const form = new FormData();
+          form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+          form.append('file', file);
+
+          const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType,size,webViewLink', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: form
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error('[CLIENT] アップロードエラー:', uploadResponse.status, errorText);
+            await logToServer('[CLIENT] アップロードエラー:', { status: uploadResponse.status, error: errorText });
+            throw new Error(`アップロード失敗: ${uploadResponse.status}`);
+          }
+
+          const result = await uploadResponse.json();
+          const fileUrl = `https://drive.google.com/file/d/${result.id}`;
+
+          console.log('[CLIENT] ✓ アップロード成功');
+          console.log('[CLIENT] ファイルID:', result.id);
+          console.log('[CLIENT] ファイルURL:', fileUrl);
+          console.log('[CLIENT] フォルダURL:', folderUrl);
+          await logToServer('[CLIENT] ✓ アップロード成功', { fileId: result.id, fileUrl, folderUrl });
+
+          const successMsg = `[${index + 1}/${filesToUpload.length}] アップロード成功: ${file.name}`;
+          console.log(successMsg);
+          await logToServer(successMsg);
+        } catch (error) {
+          const errorMsg = `[${index + 1}/${filesToUpload.length}] アップロード失敗: ${file.name}`;
+          console.error(errorMsg, error);
+          await logToServer(errorMsg, error);
+          throw error;
+        }
       });
 
       await Promise.all(uploadPromises);
