@@ -94,6 +94,9 @@ const credentials = {
     console.log('[SERVER] ファイル名:', fileName);
     console.log('[SERVER] MIMEタイプ (受信):', mimeType);
 
+    // MIMEタイプをここで宣言してcatchブロックからもアクセス可能に
+    let finalMimeType = mimeType;
+
     try {
       const drive = google.drive({ version: 'v3', auth });
       const directoryId = process.env.NEXT_PUBLIC_DIRECTORY_ID!;
@@ -104,7 +107,6 @@ const credentials = {
       console.log('[SERVER] ファイルサイズ:', buffer.length, 'bytes (', fileSizeInMB, 'MB)');
 
       // MIMEタイプが空の場合、ファイル拡張子から推測
-      let finalMimeType = mimeType;
       if (!finalMimeType || finalMimeType === '') {
         const extension = fileName.toLowerCase().split('.').pop();
         const mimeTypeMap: { [key: string]: string } = {
@@ -135,6 +137,9 @@ const credentials = {
       // 5MB以上のファイルはresumable uploadを使用
       const FIVE_MB = 5 * 1024 * 1024;
 
+      const folderUrl = `https://drive.google.com/drive/folders/${directoryId}`;
+      console.log('[SERVER] アップロード先フォルダURL:', folderUrl);
+
       if (buffer.length > FIVE_MB) {
         console.log('[SERVER] 5MB超: Resumable uploadを使用します');
         // Resumable upload
@@ -148,7 +153,7 @@ const credentials = {
             mimeType: finalMimeType,
             body: new Stream.PassThrough().end(buffer),
           },
-          fields: 'id',
+          fields: 'id,name,mimeType,size,webViewLink,webContentLink',
         }, {
           // resumableアップロードを有効化
           onUploadProgress: (evt) => {
@@ -156,11 +161,27 @@ const credentials = {
             console.log(`[SERVER] Upload progress: ${progress.toFixed(2)}%`);
           },
         });
-        console.log('[SERVER] アップロード成功 (resumable):', response.data.id);
+
+        console.log('[SERVER] === アップロード成功 (resumable) ===');
+        console.log('[SERVER] レスポンス全体:', JSON.stringify(response.data, null, 2));
+        console.log('[SERVER] ファイルID:', response.data.id);
+        console.log('[SERVER] ファイル名:', response.data.name);
+        console.log('[SERVER] MIMEタイプ:', response.data.mimeType);
+        console.log('[SERVER] ファイルサイズ:', response.data.size);
+
+        const fileUrl = `https://drive.google.com/file/d/${response.data.id}`;
+        console.log('[SERVER] ファイルURL:', fileUrl);
+        console.log('[SERVER] フォルダURL:', folderUrl);
+
+        if (!response.data.id) {
+          console.error('[SERVER] 警告: ファイルIDが取得できませんでした！');
+          throw new Error('ファイルIDが取得できませんでした');
+        }
 
         return {
           message: 'アップロード成功！',
-          url: `https://drive.google.com/file/d/${response.data.id}`,
+          url: fileUrl,
+          fileId: response.data.id,
         };
       } else {
         console.log('[SERVER] 5MB以下: 通常のアップロードを使用します');
@@ -175,22 +196,59 @@ const credentials = {
             mimeType: finalMimeType,
             body: new Stream.PassThrough().end(buffer),
           },
+          fields: 'id,name,mimeType,size,webViewLink,webContentLink',
         });
-        console.log('[SERVER] アップロード成功 (通常):', response.data.id);
+
+        console.log('[SERVER] === アップロード成功 (通常) ===');
+        console.log('[SERVER] レスポンス全体:', JSON.stringify(response.data, null, 2));
+        console.log('[SERVER] ファイルID:', response.data.id);
+        console.log('[SERVER] ファイル名:', response.data.name);
+        console.log('[SERVER] MIMEタイプ:', response.data.mimeType);
+        console.log('[SERVER] ファイルサイズ:', response.data.size);
+
+        const fileUrl = `https://drive.google.com/file/d/${response.data.id}`;
+        console.log('[SERVER] ファイルURL:', fileUrl);
+        console.log('[SERVER] フォルダURL:', folderUrl);
+
+        if (!response.data.id) {
+          console.error('[SERVER] 警告: ファイルIDが取得できませんでした！');
+          throw new Error('ファイルIDが取得できませんでした');
+        }
 
         return {
           message: 'アップロード成功！',
-          url: `https://drive.google.com/file/d/${response.data.id}`,
+          url: fileUrl,
+          fileId: response.data.id,
         };
       }
     } catch (error) {
       console.error('[SERVER] === アップロードエラー ===');
       console.error('[SERVER] ファイル名:', fileName);
-      console.error('[SERVER] エラー詳細:', error);
+      console.error('[SERVER] MIMEタイプ:', mimeType);
+      console.error('[SERVER] 最終MIMEタイプ:', finalMimeType);
+      console.error('[SERVER] エラー詳細 (JSON):', JSON.stringify(error, null, 2));
+      console.error('[SERVER] エラー詳細 (toString):', String(error));
+
       if (error instanceof Error) {
         console.error('[SERVER] エラーメッセージ:', error.message);
+        console.error('[SERVER] エラー名:', error.name);
         console.error('[SERVER] スタックトレース:', error.stack);
       }
+
+      // Google API固有のエラー情報を出力
+      if (typeof error === 'object' && error !== null) {
+        const errorObj = error as Record<string, unknown>;
+        if ('code' in errorObj) {
+          console.error('[SERVER] エラーコード:', errorObj.code);
+        }
+        if ('errors' in errorObj) {
+          console.error('[SERVER] エラー配列:', JSON.stringify(errorObj.errors, null, 2));
+        }
+        if ('response' in errorObj) {
+          console.error('[SERVER] レスポンス:', JSON.stringify(errorObj.response, null, 2));
+        }
+      }
+
       throw error;
     }
   }
